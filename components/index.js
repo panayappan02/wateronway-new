@@ -10,6 +10,7 @@ import PhoneNumber from './profile/PhoneNumber';
 import VerifyCode from './profile/VerifyCode';
 import Authenticated from './profile/Authenticated';
 import UserDetailForm from './profile/UserDetailForm';
+import ProfileInfo from './profile/ProfileInfo';
 
 export {
   TabIcon,
@@ -22,4 +23,5 @@ export {
   Loading,
   Button,
   UserDetailForm,
+  ProfileInfo,
 };

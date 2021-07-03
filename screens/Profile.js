@@ -2,25 +2,26 @@ import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, SafeAreaView} from 'react-native';
 import {Authenticated, Loading, PhoneNumber, VerifyCode} from '../components';
 import auth from '@react-native-firebase/auth';
-
 import {COLORS} from '../constants';
 
+// redux
+import {useSelector, useDispatch} from 'react-redux';
+
 const Profile = () => {
+  const {user} = useSelector(state => state.user);
+
   const [confirm, setConfirm] = useState(null);
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    auth().onAuthStateChanged(user => {
-      if (user) {
-        setAuthenticated(user);
-      } else {
-        setAuthenticated(false);
-      }
-
-      setLoading(false);
-    });
-  }, []);
+    if (user) {
+      setAuthenticated(user);
+    } else {
+      setAuthenticated(false);
+    }
+    setLoading(false);
+  }, [user]);
 
   const signIn = async phoneNumber => {
     try {
@@ -35,6 +36,8 @@ const Profile = () => {
     try {
       await confirm.confirm(code);
       setConfirm(null);
+      // TODO:
+      setLoading(true);
     } catch (error) {
       alert('Invalid code');
       return {
@@ -51,7 +54,7 @@ const Profile = () => {
       </View>
     );
 
-  if (authenticated) return <Authenticated user={authenticated} />;
+  if (authenticated) return <Authenticated />;
 
   if (confirm)
     return (
