@@ -34,7 +34,10 @@ const VerifyCode = ({onSubmit, cancel}) => {
     if (loading) return;
     setLoading(true);
 
-    await onSubmit(value);
+    const res = await onSubmit(value);
+    if (res?.status === 'error') {
+      setLoading(false);
+    }
   };
 
   return (
@@ -49,6 +52,7 @@ const VerifyCode = ({onSubmit, cancel}) => {
           value={value}
           autoFocus={true}
           onChangeText={setValue}
+          onEndEditing={() => verifyCode()}
           cellCount={CELL_COUNT}
           rootStyle={styles.codeFieldRoot}
           keyboardType="number-pad"

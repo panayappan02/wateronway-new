@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   SafeAreaView,
+  TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
 import {Button, Loading} from '..';
@@ -26,32 +27,35 @@ const PhoneNumber = ({onSubmit}) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Login or Signup</Text>
-      <Text style={styles.desc}>Make Count of Every Drop</Text>
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Mobile Number</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Your Number"
-          keyboardType="number-pad"
-          value={phoneNumber}
-          onChangeText={text => setPhoneNumber(text)}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>Login or Signup</Text>
+        <Text style={styles.desc}>Make Count of Every Drop</Text>
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Mobile Number</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Your Number"
+            keyboardType="number-pad"
+            value={phoneNumber}
+            maxLength={10}
+            onChangeText={text => setPhoneNumber(text)}
+          />
+        </View>
+        <Button
+          label="Continue"
+          loading={loading}
+          containerStyle={{marginTop: 20}}
+          onPress={signIn}
+          disabled={
+            !(
+              validator.isMobilePhone(phoneNumber) &&
+              validator.isLength(phoneNumber, {min: 10})
+            )
+          }
         />
-      </View>
-      <Button
-        label="Continue"
-        loading={loading}
-        containerStyle={{marginTop: 20}}
-        onPress={signIn}
-        disabled={
-          !(
-            validator.isMobilePhone(phoneNumber) &&
-            validator.isLength(phoneNumber, {min: 10})
-          )
-        }
-      />
-    </SafeAreaView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 };
 

@@ -37,6 +37,10 @@ const Profile = () => {
       setConfirm(null);
     } catch (error) {
       alert('Invalid code');
+      return {
+        status: 'error',
+        error: error,
+      };
     }
   };
 
