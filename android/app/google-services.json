@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "1055801345407",
+    "firebase_url": "https://wateronway-bfc9d.firebaseio.com",
+    "project_id": "wateronway-bfc9d",
+    "storage_bucket": "wateronway-bfc9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055801345407:android:7921fed7d273d01c4bc64a",
+        "android_client_info": {
+          "package_name": "com.wateronway_rn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055801345407-ohoe5ffl6resh70nsp8j5d7e7f5jppah.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wateronway_rn",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1055801345407-iqmmnvomc8intb4d2p9gdpn3nr2ncm7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxkBYQ6YHVHvvkJ7mdN1ogvOZ5VCjKvuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055801345407-iqmmnvomc8intb4d2p9gdpn3nr2ncm7j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055801345407:android:02915a86ba0d49b94bc64a",
+        "android_client_info": {
+          "package_name": "com.wateronwayrn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055801345407-ev8imbjovc1kao6mbgelda5v58nsfi2g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wateronwayrn",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1055801345407-iqmmnvomc8intb4d2p9gdpn3nr2ncm7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxkBYQ6YHVHvvkJ7mdN1ogvOZ5VCjKvuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055801345407-iqmmnvomc8intb4d2p9gdpn3nr2ncm7j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
