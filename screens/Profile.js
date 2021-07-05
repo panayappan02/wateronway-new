@@ -35,9 +35,9 @@ const Profile = () => {
   const confirmVerificationCode = async code => {
     try {
       await confirm.confirm(code);
-      setConfirm(null);
       // TODO:
       setLoading(true);
+      setConfirm(null);
     } catch (error) {
       alert('Invalid code');
       return {
@@ -50,7 +50,7 @@ const Profile = () => {
   if (loading)
     return (
       <View style={styles.container}>
-        <Loading loading={true} color={COLORS.primary} size={40} />
+        <Loading loading={loading} color={COLORS.primary} size={40} />
       </View>
     );
 

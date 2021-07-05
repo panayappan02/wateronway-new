@@ -28,13 +28,14 @@ const App = () => {
   const getUserInfo = () => {
     auth().onAuthStateChanged(user => {
       if (user) {
-        getUserIdFromDb(user);
-        dispatch(
-          setUser({
-            uid: user.uid,
-            phoneNumber: user.phoneNumber,
-          }),
-        );
+        getUserIdFromDb(user).then(() => {
+          dispatch(
+            setUser({
+              uid: user.uid,
+              phoneNumber: user.phoneNumber,
+            }),
+          );
+        });
       } else {
         dispatch(setUser(null));
       }
