@@ -5,6 +5,11 @@ import VectorIcon from './VectorIcon';
 import Loading from './Loading';
 import Button from './Button';
 
+// Onboarding
+import OnboardingItem from './onboarding/OnboardingItem';
+import Paginator from './onboarding/Paginator';
+import NextButton from './onboarding/NextButton';
+
 // Profile
 import PhoneNumber from './profile/PhoneNumber';
 import VerifyCode from './profile/VerifyCode';
@@ -24,4 +29,7 @@ export {
   Button,
   UserDetailForm,
   ProfileInfo,
+  OnboardingItem,
+  Paginator,
+  NextButton,
 };
