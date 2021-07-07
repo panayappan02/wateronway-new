@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,17 +8,31 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {Carousel, ProductCard, VectorIcon} from '../components';
+import {Carousel, Loading, ProductCard, VectorIcon} from '../components';
 import {SIZES, icons, FONTS, FONTFAMIY, COLORS} from '../constants';
+import {locationHelper} from '../utils';
 
 const Home = () => {
+  const [loading, setLoading] = useState(true);
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    getLocationFromLocalStorage();
+  }, []);
+
+  const getLocationFromLocalStorage = async () => {
+    const locationResponse = await locationHelper.getLocation();
+    setLocation(locationResponse);
+    setLoading(false);
+  };
+
   function renderAddressBar() {
     return (
       <TouchableOpacity style={styles.cardShadow}>
         <View style={[styles.cardContainer, styles.addressContainer]}>
           <VectorIcon.Ionicons name="ios-location-outline" size={30} />
           <Text style={styles.addressText} numberOfLines={1}>
-            18,south street, ganapathy nagr, thanavur - 613001
+            {location?.address}
           </Text>
         </View>
       </TouchableOpacity>
@@ -44,11 +58,13 @@ const Home = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {renderAddressBar()}
-        {renderCarousel()}
-        {renderProducts()}
-      </ScrollView>
+      <Loading loading={loading} color={COLORS.primary} size={40}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {renderAddressBar()}
+          {renderCarousel()}
+          {renderProducts()}
+        </ScrollView>
+      </Loading>
     </SafeAreaView>
   );
 };

@@ -54,9 +54,9 @@ const Onboarding = () => {
           [
             {
               text: 'Cancel',
-              onPress: async () => {
-                await AsyncStorage.setItem('viewOnboarding', 'true');
-                navigation.dispatch(StackActions.replace('LocationSelection'));
+              onPress: () => {
+                saveOnboardingOnLocalStorage();
+                navigateToLocationScreen();
               },
               style: 'cancel',
             },
@@ -65,7 +65,8 @@ const Onboarding = () => {
               onPress: async () => {
                 response = await Permissions.request(permissionType);
                 if (response === 'granted') {
-                  handleGranted();
+                  saveOnboardingOnLocalStorage();
+                  getLocation();
                 }
               },
             },
@@ -74,37 +75,46 @@ const Onboarding = () => {
       }
 
       if (response === 'granted') {
-        handleGranted();
+        saveOnboardingOnLocalStorage();
+        getLocation();
       }
     } catch (error) {
       console.log('ERROR HANDLEPERMISSIONS ONBOARDING', error);
     }
   };
 
-  const handleGranted = async () => {
+  const saveOnboardingOnLocalStorage = async () => {
     try {
       await AsyncStorage.setItem('viewOnboarding', 'true');
-      getLocation();
     } catch (error) {
-      console.log('ERROR HANDLEGRANTED IN ONBOARDING JS ', error);
+      console.log(
+        'ERROR SAVEONBOARDINGONLOCALSTORAGE IN ONBOARDING JS ',
+        error,
+      );
     }
   };
 
   const getLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
-        navigation.dispatch(
-          StackActions.replace('LocationSelection', {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          }),
-        );
+        navigateToLocationScreen({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
       },
       error => {
         console.log('ERROR GETLOCATION ONBOARDING ', error.code, error.message);
       },
       {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
     );
+  };
+
+  const navigateToLocationScreen = location => {
+    if (location) {
+      navigation.dispatch(StackActions.replace('LocationSelection', location));
+    } else {
+      navigation.dispatch(StackActions.replace('LocationSelection'));
+    }
   };
 
   return (

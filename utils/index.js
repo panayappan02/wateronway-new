@@ -1,3 +1,4 @@
+import locationHelper from './location';
 import userHelper from './user';
 
-export {userHelper};
+export {locationHelper, userHelper};
