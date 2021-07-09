@@ -7,14 +7,14 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import {VectorIcon} from '../components';
+import {OrderCard, VectorIcon} from '../components';
 import {COLORS, FONTFAMIY, FONTS, SIZES} from '../constants';
 
 const Orders = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Your Orders</Text>
-      
+      <OrderCard />
     </SafeAreaView>
   );
 };
@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 5,
     paddingBottom: 70,
+    backgroundColor: COLORS.white,
   },
   title: {
     ...FONTS.h1,
