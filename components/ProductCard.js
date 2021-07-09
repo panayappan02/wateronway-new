@@ -8,15 +8,32 @@ import {Rating} from 'react-native-ratings';
 import Modal from 'react-native-modal';
 import {ProductModal, VectorIcon} from '.';
 import {useSelector, useDispatch} from 'react-redux';
-import {setSelectedProduct, toggleProductModal} from '../redux/productSlice';
+import {
+  setSelectedProduct,
+  toggleProductModal,
+  setSelectedSeller,
+} from '../redux/productSlice';
 import {COLORS, SIZES, images, FONTS, FONTFAMIY, icons} from '../constants';
+import _ from 'lodash';
 
 const ProductCard = ({product}) => {
-  const {image_url, product_name, quantity, mrp, price} = product.item;
-  const {productModalVisible} = useSelector(state => state.product);
+  const {
+    image_url,
+    product_name,
+    quantity,
+    mrp,
+    price,
+    seller_id,
+  } = product.item;
+  const {productModalVisible, selectedSeller, sellerList} = useSelector(
+    state => state.product,
+  );
   const dispatch = useDispatch();
 
   const buyNow = () => {
+    const seller = _.find(sellerList, ['sellerId', seller_id]);
+    dispatch(setSelectedSeller(seller));
+
     dispatch(
       setSelectedProduct({
         product_name,

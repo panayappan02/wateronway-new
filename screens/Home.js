@@ -14,8 +14,11 @@ import {locationHelper} from '../utils';
 import firestore from '@react-native-firebase/firestore';
 import {GeoFirestore} from 'geofirestore';
 import _ from 'lodash';
+import {useSelector, useDispatch} from 'react-redux';
+import {setSellerList} from '../redux/productSlice';
 
 const Home = () => {
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const [location, setLocation] = useState(null);
   const [sellers, setSellers] = useState([]);
@@ -108,6 +111,19 @@ const Home = () => {
       });
 
       setSellers(sellers);
+      const sellerListForRedux = _.map(sellers, function (seller) {
+        return {
+          sellerId: seller.id,
+          sellerName: seller.item.sellerName,
+          sellerMobile: seller.item.sellerMobile,
+          sellerLocation: {
+            latitude: seller.item.g.geopoint._latitude,
+            longitude: seller.item.g.geopoint._longitude,
+          },
+          deliverableDistance: seller.item.deliverableDistance,
+        };
+      });
+      dispatch(setSellerList(sellerListForRedux));
       const arrayOfBanners = _.map(sellers, 'item.banners');
       const banners = _.flattenDeep(arrayOfBanners);
       setBanners(banners);

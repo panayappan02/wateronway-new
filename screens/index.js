@@ -5,5 +5,14 @@ import Home from './Home';
 import Orders from './Orders';
 import Payments from './Payments';
 import Profile from './Profile';
+import Checkout from './Checkout';
 
-export {Onboarding, LocationSelection, Home, Orders, Payments, Profile};
+export {
+  Onboarding,
+  LocationSelection,
+  Home,
+  Orders,
+  Payments,
+  Profile,
+  Checkout,
+};

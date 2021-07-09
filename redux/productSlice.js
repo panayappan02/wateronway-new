@@ -4,6 +4,8 @@ import _ from 'lodash';
 const initialState = {
   productModalVisible: false,
   selectedProduct: null,
+  selectedSeller: null,
+  sellerList: [],
 };
 
 export const productSlice = createSlice({
@@ -12,6 +14,12 @@ export const productSlice = createSlice({
   reducers: {
     setSelectedProduct: (state, action) => {
       state.selectedProduct = action.payload;
+    },
+    setSelectedSeller: (state, action) => {
+      state.selectedSeller = action.payload;
+    },
+    setSellerList: (state, action) => {
+      state.sellerList = action.payload;
     },
     toggleProductModal: state => {
       state.productModalVisible = !state.productModalVisible;
@@ -34,6 +42,8 @@ export const productSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   setSelectedProduct,
+  setSelectedSeller,
+  setSellerList,
   toggleProductModal,
   incrementQty,
   decrementQty,

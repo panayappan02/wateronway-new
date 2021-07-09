@@ -10,6 +10,7 @@ import {
   Profile,
   Onboarding,
   LocationSelection,
+  Checkout,
 } from './screens';
 import Tabs from './navigation/tabs';
 import {useSelector, useDispatch} from 'react-redux';
@@ -113,6 +114,7 @@ const App = () => {
             component={LocationSelection}
           />
           <Stack.Screen name="Tabs" component={Tabs} />
+          <Stack.Screen name="Checkout" component={Checkout} />
         </Stack.Navigator>
       </NavigationContainer>
     </Loading>

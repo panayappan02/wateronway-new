@@ -14,8 +14,10 @@ import {
 } from '../../redux/productSlice';
 import {COLORS, FONTFAMIY, images, SIZES} from '../../constants';
 import {Button, VectorIcon} from '..';
+import {useNavigation} from '@react-navigation/native';
 
 const ProductModal = ({visible}) => {
+  const navigation = useNavigation();
   const {productModalVisible, selectedProduct} = useSelector(
     state => state.product,
   );
@@ -23,6 +25,11 @@ const ProductModal = ({visible}) => {
 
   const toggleModal = () => {
     dispatch(toggleProductModal());
+  };
+
+  const navigateToCheckoutScreen = () => {
+    toggleModal();
+    navigation.navigate('Checkout');
   };
 
   function renderCloseIcon() {
@@ -87,6 +94,32 @@ const ProductModal = ({visible}) => {
     );
   }
 
+  function renderTotal() {
+    return (
+      <View style={styles.totalContainer}>
+        <View style={styles.row}>
+          <VectorIcon.AntDesign name="shoppingcart" size={25} />
+          <Text style={styles.label}>Total Amount</Text>
+        </View>
+        <View>
+          <View style={styles.row}>
+            <VectorIcon.FontAwesome
+              name="rupee"
+              size={15}
+              color={COLORS.gold}
+              style={{
+                marginTop: 2.3,
+              }}
+            />
+            <Text style={styles.total}>
+              {selectedProduct?.price * selectedProduct?.qty}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   function renderContinueBtn() {
     return (
       <View style={styles.continueBtnContainer}>
@@ -96,6 +129,7 @@ const ProductModal = ({visible}) => {
             borderRadius: 10,
           }}
           disabled={selectedProduct?.qty === 0 && true}
+          onPress={navigateToCheckoutScreen}
         />
       </View>
     );
@@ -106,10 +140,13 @@ const ProductModal = ({visible}) => {
       <Modal
         isVisible={productModalVisible}
         onBackdropPress={toggleModal}
-        onBackButtonPress={toggleModal}>
+        onBackButtonPress={toggleModal}
+        deviceHeight={SIZES.height}
+        deviceWidth={SIZES.width}>
         <View style={styles.container}>
           {renderCloseIcon()}
           {renderCard()}
+          {renderTotal()}
           {renderContinueBtn()}
         </View>
       </Modal>
@@ -217,6 +254,28 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     marginLeft: 10,
   },
+
+  totalContainer: {
+    marginTop: '8%',
+    paddingHorizontal: '5%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+
+  total: {
+    fontFamily: FONTFAMIY.TTCommonsMedium,
+    fontSize: 20,
+    color: COLORS.gold,
+    marginLeft: 0.2,
+  },
+
+  label: {
+    fontFamily: FONTFAMIY.TTCommonsMedium,
+    fontSize: 18,
+    marginLeft: 8,
+  },
+
   continueBtnContainer: {
     flex: 0.9,
     justifyContent: 'flex-end',
