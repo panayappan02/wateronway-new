@@ -19,6 +19,9 @@ import Loading from './Loading';
 import Button from './Button';
 import ProductModal from './product/ProductModal';
 
+// Orders
+import OrderCard from './orders/OrderCard';
+
 export {
   TabIcon,
   VectorIcon,
@@ -35,4 +38,5 @@ export {
   Paginator,
   NextButton,
   ProductModal,
+  OrderCard,
 };
