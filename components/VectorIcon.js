@@ -9,6 +9,7 @@ import IoniconsI from 'react-native-vector-icons/Ionicons';
 import FeatherI from 'react-native-vector-icons/Feather';
 import EntypoI from 'react-native-vector-icons/Entypo';
 import ZocialI from 'react-native-vector-icons/Zocial';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import React from 'react';
 
 export const MaterialCommunityIcons = props => (
@@ -38,4 +39,5 @@ export default {
   Feather,
   Entypo,
   Zocial,
+  AntDesign,
 };

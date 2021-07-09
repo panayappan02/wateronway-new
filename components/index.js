@@ -1,10 +1,3 @@
-import Carousel from './Carousel';
-import ProductCard from './ProductCard';
-import TabIcon from './TabIcon';
-import VectorIcon from './VectorIcon';
-import Loading from './Loading';
-import Button from './Button';
-
 // Onboarding
 import OnboardingItem from './onboarding/OnboardingItem';
 import Paginator from './onboarding/Paginator';
@@ -16,6 +9,15 @@ import VerifyCode from './profile/VerifyCode';
 import Authenticated from './profile/Authenticated';
 import UserDetailForm from './profile/UserDetailForm';
 import ProfileInfo from './profile/ProfileInfo';
+
+// Home
+import Carousel from './Carousel';
+import ProductCard from './ProductCard';
+import TabIcon from './TabIcon';
+import VectorIcon from './VectorIcon';
+import Loading from './Loading';
+import Button from './Button';
+import ProductModal from './product/ProductModal';
 
 export {
   TabIcon,
@@ -32,4 +34,5 @@ export {
   OnboardingItem,
   Paginator,
   NextButton,
+  ProductModal,
 };

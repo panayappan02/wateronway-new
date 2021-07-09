@@ -11,19 +11,131 @@ import {
 import {Carousel, Loading, ProductCard, VectorIcon} from '../components';
 import {SIZES, icons, FONTS, FONTFAMIY, COLORS} from '../constants';
 import {locationHelper} from '../utils';
+import firestore from '@react-native-firebase/firestore';
+import {GeoFirestore} from 'geofirestore';
+import _ from 'lodash';
 
 const Home = () => {
   const [loading, setLoading] = useState(true);
   const [location, setLocation] = useState(null);
+  const [sellers, setSellers] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [banners, setBanners] = useState([]);
+
+  const geofirestore = new GeoFirestore(firestore());
+  const geocollection = geofirestore.collection('sellers');
+  const sellerCollection = firestore().collection('sellers');
+  const productCollection = firestore().collection('products');
 
   useEffect(() => {
-    getLocationFromLocalStorage();
+    getSellerDetails();
   }, []);
 
-  const getLocationFromLocalStorage = async () => {
-    const locationResponse = await locationHelper.getLocation();
-    setLocation(locationResponse);
-    setLoading(false);
+  const calculateDistance = (lat1, lon1, lat2, lon2, unit) => {
+    if (lat1 == lat2 && lon1 == lon2) {
+      return 0;
+    } else {
+      var radlat1 = (Math.PI * lat1) / 180;
+      var radlat2 = (Math.PI * lat2) / 180;
+      var theta = lon1 - lon2;
+      var radtheta = (Math.PI * theta) / 180;
+      var dist =
+        Math.sin(radlat1) * Math.sin(radlat2) +
+        Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+      if (dist > 1) {
+        dist = 1;
+      }
+      dist = Math.acos(dist);
+      dist = (dist * 180) / Math.PI;
+      dist = dist * 60 * 1.1515;
+      if (unit == 'K') {
+        dist = dist * 1.609344;
+      }
+      if (unit == 'N') {
+        dist = dist * 0.8684;
+      }
+      return dist;
+    }
+  };
+
+  const getSellerDetails = async () => {
+    try {
+      const locationResponse = await locationHelper.getLocation();
+      setLocation(locationResponse);
+
+      const geoSnapshot = await geocollection
+        .near({
+          center: new firestore.GeoPoint(
+            locationResponse?.latitude,
+            locationResponse?.longitude,
+          ),
+          radius: 10,
+        })
+        .get();
+      const sellerSnapshot = await sellerCollection
+        .where('deliverableDistance', '>=', 10)
+        .get();
+
+      const geoSnapshotData = geoSnapshot.docs.map(doc => ({
+        id: doc.id,
+        item: doc.data(),
+      }));
+      const sellerSnapshotData = sellerSnapshot.docs.map(doc => ({
+        id: doc.id,
+        item: doc.data(),
+      }));
+
+      const uniqueSellersSnapshotData = _.unionWith(
+        geoSnapshotData,
+        sellerSnapshotData,
+        _.isEqual,
+      );
+
+      const sellers = [];
+
+      uniqueSellersSnapshotData.map(doc => {
+        const distance = calculateDistance(
+          locationResponse?.latitude,
+          locationResponse?.longitude,
+          doc.item.g.geopoint._latitude,
+          doc.item.g.geopoint._longitude,
+          'K',
+        );
+
+        if (distance <= doc.item.deliverableDistance) {
+          sellers.push(doc);
+        }
+      });
+
+      setSellers(sellers);
+      const arrayOfBanners = _.map(sellers, 'item.banners');
+      const banners = _.flattenDeep(arrayOfBanners);
+      setBanners(banners);
+
+      const sellerIds = _.map(sellers, 'id');
+      getProductDetails(sellerIds);
+    } catch (error) {
+      console.log('ERROR IN GETSELLERDETAILS ', error);
+    }
+  };
+
+  const getProductDetails = async sellerIdsArr => {
+    try {
+      productCollection
+        .where('seller_id', 'in', sellerIdsArr)
+        .onSnapshot(snapshot => {
+          const productSnapshotData = snapshot.docs.map(doc => ({
+            id: doc.id,
+            item: doc.data(),
+          }));
+
+          setProducts(productSnapshotData);
+        });
+    } catch (error) {
+      console.log('ERROR IN GETPRODUCTDETAILS ', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   function renderAddressBar() {
@@ -40,7 +152,9 @@ const Home = () => {
   }
 
   function renderCarousel() {
-    return <Carousel />;
+    if (banners.length) {
+      return <Carousel banners={banners} />;
+    }
   }
 
   function renderProducts() {
@@ -48,8 +162,8 @@ const Home = () => {
       <View style={styles.productListWrapper}>
         <Text style={styles.productListTitle}>Our Services Near You !</Text>
         <View style={styles.productListContainer}>
-          {[1, 2, 3, 4].map((product, index) => {
-            return <ProductCard key={index} />;
+          {products.map((product, index) => {
+            return <ProductCard key={index} product={product} />;
           })}
         </View>
       </View>

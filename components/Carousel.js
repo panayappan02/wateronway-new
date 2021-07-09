@@ -9,11 +9,11 @@ const sampleData = [
   'https://danilowoz.com/images/atomic-design-with-react/cover.jpg',
 ];
 
-const Carousel = ({containerStyle}) => {
+const Carousel = ({banners, containerStyle}) => {
   return (
     <View style={{...containerStyle}}>
       <AnimatedImageSlider
-        data={sampleData}
+        data={banners}
         imageBorderRadius={10}
         imageHeight={160}
         imageWidth={SIZES.width * 0.95}
