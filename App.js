@@ -14,7 +14,7 @@ import {
 } from './screens';
 import Tabs from './navigation/tabs';
 import {useSelector, useDispatch} from 'react-redux';
-import {setUser} from './redux/userSlice';
+import {setUser, setUserId} from './redux/userSlice';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {userHelper} from './utils';
@@ -66,17 +66,21 @@ const App = () => {
     }
   };
 
-  const getUserInfo = () => {
+  const getUserInfo = async () => {
     auth().onAuthStateChanged(user => {
       if (user) {
-        getUserIdFromDb(user).then(() => {
-          dispatch(
-            setUser({
-              uid: user.uid,
-              phoneNumber: user.phoneNumber,
-            }),
-          );
+        userHelper.getUserId().then(userIdResponse => {
+          if (userIdResponse !== null) {
+            dispatch(setUserId(userIdResponse));
+          }
         });
+        dispatch(
+          setUser({
+            uid: user.uid,
+            phoneNumber: user.phoneNumber,
+          }),
+        );
+        // });
       } else {
         dispatch(setUser(null));
       }

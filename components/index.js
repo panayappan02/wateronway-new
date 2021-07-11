@@ -22,6 +22,9 @@ import ProductModal from './product/ProductModal';
 // Orders
 import OrderCard from './orders/OrderCard';
 
+// Checkout
+import AddressCard from './checkout/AddressCard';
+
 export {
   TabIcon,
   VectorIcon,
@@ -39,4 +42,5 @@ export {
   NextButton,
   ProductModal,
   OrderCard,
+  AddressCard,
 };

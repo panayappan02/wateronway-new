@@ -7,7 +7,7 @@ import {COLORS} from '../constants';
 // redux
 import {useSelector, useDispatch} from 'react-redux';
 
-const Profile = () => {
+const Profile = ({fromOtherComponent}) => {
   const {user} = useSelector(state => state.user);
 
   const [confirm, setConfirm] = useState(null);
@@ -54,7 +54,8 @@ const Profile = () => {
       </View>
     );
 
-  if (authenticated) return <Authenticated />;
+  if (authenticated)
+    return <Authenticated fromOtherComponent={fromOtherComponent} />;
 
   if (confirm)
     return (

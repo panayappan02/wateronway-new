@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {OrderCard, VectorIcon} from '../components';
 import {COLORS, FONTFAMIY, FONTS, SIZES} from '../constants';
+import {useSelector, useDispatch} from 'react-redux';
 
 const Orders = () => {
   return (

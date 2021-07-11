@@ -6,6 +6,7 @@ const location = require('../assets/icons/location.png');
 const waterBottle = require('../assets/icons/water-bottle.png');
 const myOrders = require('../assets/icons/myOrders.png');
 const getHelp = require('../assets/icons/getHelp.png');
+const cod = require('../assets/icons/cash-on-delivery.png');
 
 export default {
   home,
@@ -16,4 +17,5 @@ export default {
   waterBottle,
   myOrders,
   getHelp,
+  cod,
 };

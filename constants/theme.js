@@ -7,6 +7,7 @@ export const COLORS = {
   white1: 'rgba(255,255,255,0.7)',
   black: '#020202',
   black1: '#3B3D40',
+  black2: '#222222',
 
   gray: '#777777',
   gray2: '#F8F8F8',
@@ -16,6 +17,9 @@ export const COLORS = {
   lightGray: '#F5F6FB',
   lightGray2: '#757575',
   lightGray3: 'lightgray',
+  lightGray4: '#E5E5E5',
+  headerBackground: '#F9F9F9',
+  headerBackIcon: '#222222',
 
   transparentBlack1: 'rgba(2, 2, 2, 0.1)',
   transparentBlack3: 'rgba(2, 2, 2, 0.3)',

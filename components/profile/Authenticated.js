@@ -8,11 +8,14 @@ import {nanoid} from 'nanoid';
 
 // redux
 import {useSelector, useDispatch} from 'react-redux';
+import {setUserId} from '../../redux/userSlice';
+import {userHelper} from '../../utils';
 
 // Collection
 const usersCollection = firestore().collection('users');
 
-const Authenticated = () => {
+const Authenticated = ({fromOtherComponent}) => {
+  const dispatch = useDispatch();
   const {user} = useSelector(state => state.user);
 
   const [loading, setLoading] = useState(true);
@@ -23,17 +26,31 @@ const Authenticated = () => {
   }, []);
 
   const checkIsUserDetailsAvailable = async () => {
-    const userSnapshot = await usersCollection
-      .where('phoneNumber', '==', user.phoneNumber)
-      .get();
+    try {
+      const userSnapshot = await usersCollection
+        .where('phoneNumber', '==', user.phoneNumber)
+        .get();
 
-    if (userSnapshot.docs.length) {
-      setIsUserDetailsAvailable(true);
-    } else {
-      setIsUserDetailsAvailable(false);
+      if (userSnapshot.docs.length) {
+        // TODO:
+        await userHelper.saveUserId(userSnapshot.docs[0].id);
+        dispatch(setUserId(userSnapshot.docs[0].id));
+        if (!fromOtherComponent) {
+          setIsUserDetailsAvailable(true);
+        }
+      } else {
+        setIsUserDetailsAvailable(false);
+      }
+    } catch (error) {
+      console.log(
+        'ERROR IN CHECKUSERDETAILSAVAILABLE IN AUTHENTICATED JS ',
+        error,
+      );
+    } finally {
+      if (!fromOtherComponent) {
+        setLoading(false);
+      }
     }
-
-    setLoading(false);
   };
 
   const saveUserDetails = async (name, email) => {
@@ -50,8 +67,13 @@ const Authenticated = () => {
           phoneNumber: user.phoneNumber,
         });
 
-        setLoading(true);
-        checkIsUserDetailsAvailable();
+        await userHelper.saveUserId(userId);
+        dispatch(setUserId(userId));
+
+        if (!fromOtherComponent) {
+          setLoading(true);
+          checkIsUserDetailsAvailable();
+        }
       } catch (error) {
         console.log(error);
         return {

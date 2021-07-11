@@ -1,55 +1,3 @@
-// import React, {useState, useEffect} from 'react';
-// import {
-//   StyleSheet,
-//   Text,
-//   View,
-//   SafeAreaView,
-//   ScrollView,
-//   Image,
-//   TouchableOpacity,
-//   Linking,
-// } from 'react-native';
-// import auth from '@react-native-firebase/auth';
-// import {COLORS, FONTFAMIY, FONTS, icons, SIZES} from '../../constants';
-// import {userHelper} from '../../utils';
-// import firestore from '@react-native-firebase/firestore';
-// import {useNavigation} from '@react-navigation/native';
-
-// // redux
-// import {useSelector, useDispatch} from 'react-redux';
-// import {Button, Loading, VectorIcon} from '..';
-// // Collection
-// const usersCollection = firestore().collection('users');
-
-// const ProfileInfo = () => {
-//   const [name, setName] = useState('');
-//   const [email, setEmail] = useState('');
-//   const [phoneNumber, setPhoneNumber] = useState('');
-//   const [loading, setLoading] = useState(true);
-//   const [logoutLoading, setLogoutLoading] = useState(false);
-
-//   useEffect(() => {
-//     getUserDetails();
-//   }, []);
-
-//   const getUserDetails = async () => {
-//     const userId = await userHelper.getUserId();
-//     usersCollection.doc(userId).onSnapshot(snapshot => {});
-//   };
-
-//   console.log(name, email, phoneNumber);
-
-//   return (
-//     <View>
-//       <Button title="Log Out" onPress={() => auth().signOut()} />
-//     </View>
-//   );
-// };
-
-// export default ProfileInfo;
-
-// const styles = StyleSheet.create({});
-
 import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
@@ -67,15 +15,19 @@ import {userHelper} from '../../utils';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import {useIsFocused} from '@react-navigation/native';
+import {Button, Loading, VectorIcon} from '..';
 
 // redux
 import {useSelector, useDispatch} from 'react-redux';
-import {Button, Loading, VectorIcon} from '..';
+import {setUserId} from '../../redux/userSlice';
+
 // Collection
 const usersCollection = firestore().collection('users');
 
 const ProfileInfo = () => {
   const navigation = useNavigation();
+  const userId = useSelector(state => state.user.userId);
+  const dispatch = useDispatch();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -87,7 +39,7 @@ const ProfileInfo = () => {
   }, []);
 
   const getUserDetails = async () => {
-    const userId = await userHelper.getUserId();
+    // const userId = await userHelper.getUserId();
     usersCollection.doc(userId).onSnapshot(snapshot => {
       setName(snapshot.data()?.name);
       setEmail(snapshot.data()?.email);
@@ -99,6 +51,7 @@ const ProfileInfo = () => {
   const logout = async () => {
     if (logoutLoading) return;
     setLogoutLoading(true);
+    dispatch(setUserId(null));
     await userHelper.removeUserId();
     auth().signOut();
   };
