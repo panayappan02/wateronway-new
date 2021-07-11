@@ -8,11 +8,13 @@ export const COLORS = {
   black: '#020202',
   black1: '#3B3D40',
   black2: '#222222',
+  BGColor: '#F9F9F9',
 
   gray: '#777777',
   gray2: '#F8F8F8',
   gray3: 'gray',
   gray4: '#E6E7E8',
+  gray5: '#9B9B9B',
   gold: '#C18e60',
   lightGray: '#F5F6FB',
   lightGray2: '#757575',
@@ -29,6 +31,9 @@ export const COLORS = {
   transparentGray: 'rgba(77,77,77, 0.8)',
   transparentDarkGray: 'rgba(20,20,20, 0.9)',
   transparent: 'transparent',
+
+  success: '#2AA952',
+  warning:'#F01F0E',
 };
 
 export const SIZES = {
@@ -40,7 +45,7 @@ export const SIZES = {
 
   // font sizes
   largeTitle: 40,
-  h1: 30,
+  h1: 34,
   h2: 22,
   h3: 16,
   h4: 14,
@@ -49,6 +54,7 @@ export const SIZES = {
   body3: 16,
   body4: 14,
   body5: 12,
+  body6: 18,
 
   // app dimensions
   width,
@@ -59,13 +65,21 @@ export const FONTS = {
   largeTitle: {fontFamily: 'TT Commons DemiBold', fontSize: SIZES.largeTitle},
   h1: {fontFamily: 'TT Commons DemiBold', fontSize: SIZES.h1},
   h2: {fontFamily: 'TT Commons Medium', fontSize: SIZES.h2},
-  h3: {fontFamily: 'TT Commons Medium', fontSize: SIZES.h3},
-  h4: {fontFamily: 'TT Commons Medium', fontSize: SIZES.h4},
+  h3: {fontFamily: 'TT Commons Medium', fontSize: SIZES.h3, lineHeight: 16},
+  h4: {fontFamily: 'TT Commons Medium', fontSize: SIZES.h4, lineHeight: 20},
   body1: {fontFamily: 'TT Commons Regular', fontSize: SIZES.body1},
   body2: {fontFamily: 'TT Commons Regular', fontSize: SIZES.body2},
   body3: {fontFamily: 'TT Commons Regular', fontSize: SIZES.body3},
   body4: {fontFamily: 'TT Commons Regular', fontSize: SIZES.body4},
   body5: {fontFamily: 'TT Commons Regular', fontSize: SIZES.body5},
+
+  h1M: {fontFamily: 'Metropolis-Bold', fontSize: SIZES.h1, lineHeight: 34},
+  h3M: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.h3, lineHeight: 16},
+  h4M: {fontFamily: 'Metropolis-Medium',fontSize: SIZES.h4, lineHeight: 20 },
+  h4MSB: {fontFamily: 'Metropolis-SemiBold',fontSize: SIZES.h4, lineHeight: 20 },
+  body4M: {fontFamily: 'Metropolis-Regular', fontSize: SIZES.body4},
+  body6SB: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.body6, lineHeight: 22},
+
 };
 
 export const FONTFAMIY = {

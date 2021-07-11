@@ -14,8 +14,14 @@ import {useSelector, useDispatch} from 'react-redux';
 const Orders = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Your Orders</Text>
+      <Text style={styles.title}>My Orders</Text>
+      <ScrollView>
       <OrderCard />
+      <OrderCard />
+      <OrderCard />
+      <OrderCard />
+      <OrderCard />
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -25,13 +31,14 @@ export default Orders;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 5,
+    padding: 14,
     paddingBottom: 70,
-    backgroundColor: COLORS.white,
+ //   backgroundColor: COLORS.white,
+    backgroundColor: COLORS.BGColor
   },
   title: {
-    ...FONTS.h1,
-    color: COLORS.gray3,
+    ...FONTS.h1M,
+    color: COLORS.black2,
     marginVertical: SIZES.base,
     marginLeft: 5,
   },

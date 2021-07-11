@@ -21,6 +21,8 @@ import {userHelper} from './utils';
 import {Loading} from './components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from './constants';
+import messaging from '@react-native-firebase/messaging';
+import { Alert } from 'react-native';
 
 // Collection
 const usersCollection = firestore().collection('users');
@@ -33,6 +35,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [showViewOnboarding, setShowViewOnboarding] = useState(true);
   const [showLocationScreen, setShowLocationScreen] = useState(false);
+  const [initialRouteName,setInitialRoute] = useState('Tabs');
 
   useEffect(() => {
     SplashScreen.hide();
@@ -42,6 +45,16 @@ const App = () => {
   useEffect(() => {
     checkOnboarding();
   }, []);
+
+  useEffect(async () => {
+    await messaging().getToken().then((token) =>{
+    console.log(token)
+    })
+  },[])
+
+ 
+ 
+ 
 
   const checkOnboarding = async () => {
     try {
@@ -107,7 +120,7 @@ const App = () => {
               ? 'Onboarding'
               : showLocationScreen
               ? 'LocationSelection'
-              : 'Tabs'
+              : initialRouteName
           }
           screenOptions={{
             headerShown: false,
