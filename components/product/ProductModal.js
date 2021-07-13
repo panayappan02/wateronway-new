@@ -1,10 +1,11 @@
-import React from 'react';
+import React,{useRef, useEffect} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Modal from 'react-native-modal';
+import RBSheet from "react-native-raw-bottom-sheet";
 import {Rating} from 'react-native-ratings';
 import {useSelector, useDispatch} from 'react-redux';
 import {
@@ -18,6 +19,8 @@ import {useNavigation} from '@react-navigation/native';
 
 const ProductModal = ({visible}) => {
   const navigation = useNavigation();
+  const refRBSheet = useRef();
+
   const {productModalVisible, selectedProduct} = useSelector(
     state => state.product,
   );
@@ -32,10 +35,13 @@ const ProductModal = ({visible}) => {
     navigation.navigate('Checkout');
   };
 
+
   function renderCloseIcon() {
     return (
       <View style={styles.closeIconContainer}>
-        <TouchableOpacity onPress={toggleModal}>
+        <TouchableOpacity 
+      //  onPress={toggleModal}
+        >
           <VectorIcon.Ionicons
             name="ios-close-circle-outline"
             size={40}
@@ -140,9 +146,16 @@ const ProductModal = ({visible}) => {
       <Modal
         isVisible={productModalVisible}
         onBackdropPress={toggleModal}
+        backdropOpacity={0.3}
         onBackButtonPress={toggleModal}
         deviceHeight={SIZES.height}
-        deviceWidth={SIZES.width}>
+        deviceWidth={SIZES.width}
+        animationInTiming={500}
+          animationOutTiming={500}
+          backdropTransitionInTiming={500}
+          backdropTransitionOutTiming={500}
+          swipeDirection={'down'}
+        style={styles.bottomModal}>
         <View style={styles.container}>
           {renderCloseIcon()}
           {renderCard()}
@@ -157,9 +170,14 @@ const ProductModal = ({visible}) => {
 export default ProductModal;
 
 const styles = StyleSheet.create({
+  bottomModal: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
   container: {
     flex: 0.7,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.BGColor,
+    borderRadius: 34,
     padding: SIZES.radius,
   },
   closeIconContainer: {

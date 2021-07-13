@@ -22,12 +22,21 @@ import {Loading} from './components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from './constants';
 import messaging from '@react-native-firebase/messaging';
-import { Alert } from 'react-native';
+import SpInAppUpdates, {
+  NeedsUpdateResponse,
+  IAUUpdateKind,
+  StartUpdateOptions,
+} from 'sp-react-native-in-app-updates';
+
 
 // Collection
 const usersCollection = firestore().collection('users');
 
 const Stack = createStackNavigator();
+
+const inAppUpdates = new SpInAppUpdates(
+  false // isDebug
+);
 
 const App = () => {
   const user = useSelector(state => state.user.user);
@@ -35,7 +44,9 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [showViewOnboarding, setShowViewOnboarding] = useState(true);
   const [showLocationScreen, setShowLocationScreen] = useState(false);
-  const [initialRouteName,setInitialRoute] = useState('Tabs');
+  // const inAppUpdates = new SpInAppUpdates(
+  //   false // isDebug
+  // );
 
   useEffect(() => {
     SplashScreen.hide();
@@ -50,6 +61,24 @@ const App = () => {
     await messaging().getToken().then((token) =>{
     console.log(token)
     })
+  },[])
+
+  useEffect(() => {
+    try{
+    inAppUpdates.checkNeedsUpdate().then((result) => {
+      if (result.shouldUpdate) {
+        let updateOptions = {};
+        if (Platform.OS === 'android') {
+          updateOptions = {
+            updateType: IAUUpdateKind.FLEXIBLE,
+          };
+        }
+        inAppUpdates.startUpdate(updateOptions);
+          }
+    });
+  } catch(err){
+    
+  }
   },[])
 
  
@@ -120,7 +149,7 @@ const App = () => {
               ? 'Onboarding'
               : showLocationScreen
               ? 'LocationSelection'
-              : initialRouteName
+              : 'Tabs'
           }
           screenOptions={{
             headerShown: false,

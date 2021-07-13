@@ -36,6 +36,9 @@ export const productSlice = createSlice({
         });
       }
     },
+    setQty: (state,action) => {
+      state.selectedProduct.qty = action.payload;
+    }
   },
 });
 
@@ -47,6 +50,7 @@ export const {
   toggleProductModal,
   incrementQty,
   decrementQty,
+  setQty,
 } = productSlice.actions;
 
 export default productSlice.reducer;

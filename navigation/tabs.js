@@ -1,5 +1,5 @@
 import React,{useEffect, useState, useRef} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, TextInput} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Home, Payments, Orders, Profile} from '../screens';
 import {COLORS, FONTS, icons} from '../constants';
@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import messaging from '@react-native-firebase/messaging';
 import { AppRegistry } from 'react-native';
 import RBSheet from "react-native-raw-bottom-sheet";
-import { AirbnbRating } from 'react-native-elements';
+import { AirbnbRating } from 'react-native-ratings';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,16 +28,18 @@ const Tabs = () => {
    useEffect(() => {
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled in the background!', remoteMessage);
+      refRBSheet.current.open();
     });
 
-    AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => bgMessaging);
+    // AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => bgMessaging);
 
     
     messaging().onNotificationOpenedApp(remoteMessage => {
       console.log(
-        'Notification caused app to open from background state 1:',
+        'Notification caused app to open from background state:',
         remoteMessage.notification,
       );
+      refRBSheet.current.open();
       navigation.navigate(remoteMessage.data.type);
     });
 
@@ -49,6 +51,7 @@ const Tabs = () => {
             'Notification caused app to open from quit state:',
             remoteMessage.notification,
           );
+          refRBSheet.current.open();
           navigation.navigate(remoteMessage.data.type);
         }
       });
@@ -113,7 +116,7 @@ const Tabs = () => {
 
     <RBSheet
           ref={refRBSheet}
-          height={640}
+          height={600}
           openDuration={250}closeOnDragDown={true}
         closeOnPressMask={false}
           customStyles={{
@@ -131,18 +134,39 @@ const Tabs = () => {
           }}
         >
           <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>How much you rate?</Text>
+          <Text style={styles.modalTitle}>Your order of Mineral Water(20L) has been delivered successfully!</Text>
 
+          <Text style={styles.reviewTitle}>How much you rate?</Text>
+
+<View>
           <AirbnbRating
   count={5}
   reviews={["Terrible","Bad","OK", "Good", "Amazing"]}
   defaultRating={0}
-  size={34}
+  size={36}
   ratingTextColor={COLORS.primary}
-  style= {{
-   margin: 24
-  }}
+  selectedColor={COLORS.starYellow}
+  reviewColor={COLORS.starYellow}
+  reviewSize={22}
 />
+</View>
+
+<View style={styles.reviewContainer}>
+  <Text style={styles.reviewTitle}>Please share your opinion about our service</Text>
+
+</View>
+
+
+<TextInput
+  style={styles.reviewInput}
+  multiline={true}
+  underlineColorAndroid='transparent'
+  numberOfLines={3}
+  textAlignVertical={"top"}
+  placeholder="Your review"
+  />
+
+<View style={styles.sendReviewButtonContainer}><Text style={styles.sendReviewBtnText}>SEND REVIEW</Text></View>
 
           </View>
         </RBSheet>
@@ -158,6 +182,52 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     ...FONTS.body6SB,
-    color: COLORS.black2
+    color: COLORS.black2,
+    textAlign: 'center',
+    marginBottom: 30
+  },
+  reviewContainer: {
+    marginTop: 30,
+    alignSelf:'center'
+  },
+  reviewTitle: {
+    ...FONTS.body6SB,
+    color: COLORS.black2,
+    textAlign: 'center',
+    alignSelf: 'center',
+    maxWidth: 230
+  },
+  reviewInput: {
+    borderRadius: 4,
+    marginTop: 18,
+    width: 343,
+    height: 154,
+    alignSelf:'center',
+    backgroundColor: COLORS.white,
+    ...FONTS.body4M,
+    color: COLORS.black2,
+    padding: 12,
+    shadowColor: "#000",
+    shadowOffset: {
+   	width: 0,
+  	height: 3,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6,
+  },
+  sendReviewButtonContainer: {
+    width: 343,
+    height: 48,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40,
+    backgroundColor: COLORS.primary,
+    borderRadius: 25
+  },
+  sendReviewBtnText: {
+    ...FONTS.body4M,
+    color: COLORS.white
   }
 });

@@ -204,7 +204,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: COLORS.BGColor,
     paddingBottom: 75,
   },
   cardShadow: {
@@ -217,9 +217,9 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
-    elevation: 3,
+    elevation: 5,
     marginHorizontal: 5,
-    marginTop: 5,
+    marginTop: 9,
   },
   cardContainer: {
     backgroundColor: '#fff',
@@ -234,8 +234,9 @@ const styles = StyleSheet.create({
   },
   addressText: {
     marginLeft: 5,
-    fontFamily: FONTFAMIY.TTCommonsMedium,
-    fontSize: 18,
+    ...FONTS.body4M,
+    // fontFamily: FONTFAMIY.TTCommonsMedium,
+     fontSize: 18,
     width: '90%',
     color: COLORS.transparentBlack9,
   },
@@ -243,8 +244,9 @@ const styles = StyleSheet.create({
     marginTop: SIZES.padding,
   },
   productListTitle: {
-    fontFamily: FONTFAMIY.TTCommonsMedium,
-    fontSize: 18,
+    // fontFamily: FONTFAMIY.TTCommonsMedium,
+    ...FONTS.h3M,
+  //  fontSize: 18,
     marginLeft: 5,
     marginBottom: SIZES.base,
     color: COLORS.transparentBlack9,

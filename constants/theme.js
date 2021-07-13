@@ -34,6 +34,7 @@ export const COLORS = {
 
   success: '#2AA952',
   warning:'#F01F0E',
+  starYellow: '#FFBA49'
 };
 
 export const SIZES = {
@@ -55,6 +56,7 @@ export const SIZES = {
   body4: 14,
   body5: 12,
   body6: 18,
+  body7: 11,
 
   // app dimensions
   width,
@@ -78,8 +80,9 @@ export const FONTS = {
   h4M: {fontFamily: 'Metropolis-Medium',fontSize: SIZES.h4, lineHeight: 20 },
   h4MSB: {fontFamily: 'Metropolis-SemiBold',fontSize: SIZES.h4, lineHeight: 20 },
   body4M: {fontFamily: 'Metropolis-Regular', fontSize: SIZES.body4},
+  body4SB: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.body4, lineHeight: 20},
   body6SB: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.body6, lineHeight: 22},
-
+  body7M: {fontFamily: 'Metropolis-Regular', fontSize: SIZES.body7, lineHeight: 11},
 };
 
 export const FONTFAMIY = {
