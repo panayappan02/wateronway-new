@@ -24,6 +24,8 @@ import OrderCard from './orders/OrderCard';
 
 // Checkout
 import AddressCard from './checkout/AddressCard';
+import AddNewAddress from './checkout/AddNewAddress';
+import NavigationBar from './checkout/NavigationBar';
 
 export {
   TabIcon,
@@ -43,4 +45,6 @@ export {
   ProductModal,
   OrderCard,
   AddressCard,
+  AddNewAddress,
+  NavigationBar,
 };

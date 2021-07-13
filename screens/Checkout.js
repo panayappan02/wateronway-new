@@ -10,22 +10,53 @@ import {
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {Profile} from '.';
-import {AddressCard, Button, Loading, VectorIcon} from '../components';
+import {
+  AddNewAddress,
+  AddressCard,
+  Button,
+  Loading,
+  VectorIcon,
+} from '../components';
 import {COLORS, FONTFAMIY, icons, SIZES} from '../constants';
+import {useNavigation} from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
+
+// Collection
+const userCollection = firestore().collection('users');
 
 const Checkout = () => {
+  const navigation = useNavigation();
   const userId = useSelector(state => state.user.userId);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [addressList, setAddressList] = useState([]);
+
+  useEffect(() => {
+    checkAddress();
+  }, [userId]);
+
+  const checkAddress = async () => {
+    userCollection.doc(userId).onSnapshot(snapshot => {
+      if (snapshot.data()?.addresses === undefined) {
+        setLoading(false);
+      }
+    });
+  };
+
+  const goBack = () => {
+    navigation.goBack();
+  };
 
   function renderHeader() {
     return (
       <View style={styles.header}>
-        <VectorIcon.Ionicons
-          name="chevron-back"
-          size={25}
-          color={COLORS.black2}
-          style={styles.backIcon}
-        />
+        <TouchableOpacity onPress={goBack}>
+          <VectorIcon.Ionicons
+            name="chevron-back"
+            size={25}
+            color={COLORS.black2}
+            style={styles.backIcon}
+          />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>Checkout</Text>
         <View></View>
       </View>
@@ -92,19 +123,26 @@ const Checkout = () => {
 
   if (!userId) return <Profile fromOtherComponent={true} />;
 
+  if (loading)
+    return (
+      <View style={styles.container}>
+        <Loading loading={true} color={COLORS.primary} />
+      </View>
+    );
+
+  if (!addressList.length) return <AddNewAddress />;
+
   return (
     <SafeAreaView style={styles.container}>
-      <Loading loading={loading} color={COLORS.primary}>
-        {renderHeader()}
-        <View style={styles.content}>
-          {renderAddress()}
-          {renderPayment()}
-          {renderPriceDetails()}
-        </View>
-        <View style={styles.submitBtnContainer}>
-          <Button label="Submit Order" containerStyle={styles.submitBtn} />
-        </View>
-      </Loading>
+      {renderHeader()}
+      <View style={styles.content}>
+        {renderAddress()}
+        {renderPayment()}
+        {renderPriceDetails()}
+      </View>
+      <View style={styles.submitBtnContainer}>
+        <Button label="Submit Order" containerStyle={styles.submitBtn} />
+      </View>
     </SafeAreaView>
   );
 };
@@ -121,7 +159,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.headerBackground,
     justifyContent: 'center',
   },
-  backIcon: {},
+  backIcon: {
+    marginLeft: '2%',
+  },
   headerTitle: {
     position: 'absolute',
     alignSelf: 'center',
