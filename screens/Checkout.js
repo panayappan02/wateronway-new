@@ -18,16 +18,13 @@ import {
   VectorIcon,
 } from '../components';
 import {COLORS, FONTFAMIY, icons, SIZES} from '../constants';
-<<<<<<< HEAD
 import {FONTS} from '../constants/theme';
 import {Divider } from 'react-native-elements'
-=======
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 
 // Collection
 const userCollection = firestore().collection('users');
->>>>>>> bc5f2e0674e7ec8aefff61411218ce3420470ed3
 
 const Checkout = () => {
   const navigation = useNavigation();
