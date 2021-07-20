@@ -30,8 +30,8 @@ const ProductModal = ({visible}) => {
     dispatch(toggleProductModal());
   };
 
-  const navigateToCheckoutScreen = () => {
-    toggleModal();
+  const navigateToCheckoutScreen = async () => {
+    await toggleModal();
     navigation.navigate('Checkout');
   };
 
