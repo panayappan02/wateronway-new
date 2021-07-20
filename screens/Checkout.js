@@ -12,6 +12,8 @@ import {useSelector, useDispatch} from 'react-redux';
 import {Profile} from '.';
 import {AddressCard, Button, Loading, VectorIcon} from '../components';
 import {COLORS, FONTFAMIY, icons, SIZES} from '../constants';
+import {FONTS} from '../constants/theme';
+import {Divider } from 'react-native-elements'
 
 const Checkout = () => {
   const userId = useSelector(state => state.user.userId);
@@ -35,7 +37,7 @@ const Checkout = () => {
   function renderAddress() {
     return (
       <>
-        <Text style={styles.title}>Shipping Address</Text>
+        <Text style={styles.title}>Delivery Address</Text>
         <View style={styles.adressCardContainer}>
           <AddressCard />
         </View>
@@ -47,17 +49,17 @@ const Checkout = () => {
     return (
       <View style={styles.payment}>
         <View style={styles.titleBar}>
-          <Text style={[styles.title, styles.left]}>Payment</Text>
+          <Text style={[styles.title, styles.left]}>Payment Mode</Text>
           <TouchableOpacity style={styles.right}>
-            <Text style={styles.rightOption}>Change</Text>
+            <Text style={styles.rightOption}>Cash On Delivery</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.paymentCardContainer}>
+        {/* <View style={styles.paymentCardContainer}>
           <View style={styles.paymentCard}>
             <Image source={icons.cod} style={styles.paymentIcon} />
             <Text style={styles.paymentMethodName}>COD</Text>
           </View>
-        </View>
+        </View> */}
       </View>
     );
   }
@@ -66,24 +68,32 @@ const Checkout = () => {
     return (
       <View style={styles.priceDetails}>
         <View style={styles.priceContainer}>
-          <Text style={styles.priceLabel}>Order:</Text>
+          <Text style={styles.priceLabel}>Cart Total:</Text>
           <View style={styles.row}>
             <VectorIcon.FontAwesome name="rupee" size={13} />
             <Text style={styles.price}>112</Text>
           </View>
         </View>
         <View style={styles.priceContainer}>
-          <Text style={styles.priceLabel}>Delivery:</Text>
+          <Text style={styles.priceLabel}>Delivery Charges:</Text>
           <View style={styles.row}>
             <VectorIcon.FontAwesome name="rupee" size={13} />
             <Text style={styles.price}>112</Text>
           </View>
         </View>
         <View style={styles.priceContainer}>
-          <Text style={styles.priceLabel}>Summary:</Text>
+          <Text style={styles.priceLabel}>Discount:</Text>
           <View style={styles.row}>
             <VectorIcon.FontAwesome name="rupee" size={13} />
             <Text style={styles.price}>112</Text>
+          </View>
+        </View>
+
+<Divider/>
+        <View style={styles.priceContainer}>
+          <Text style={[styles.priceLabel, styles.priceLabelHighLight]}>Total Amount:</Text>
+          <View style={styles.row}>
+            <Text style={styles.priceMTContainer}>₹<Text style={[styles.price, styles.priceHighLight]}>112</Text></Text>
           </View>
         </View>
       </View>
@@ -114,19 +124,23 @@ export default Checkout;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.lightGray4,
+   // backgroundColor: COLORS.lightGray4,
+   backgroundColor: COLORS.BGColor
   },
   header: {
     height: 88 - StatusBar.currentHeight,
     backgroundColor: COLORS.headerBackground,
     justifyContent: 'center',
+    padding: 15,
+    elevation: 5,
   },
   backIcon: {},
   headerTitle: {
     position: 'absolute',
     alignSelf: 'center',
-    fontFamily: FONTFAMIY.TTCommonsMedium,
-    fontSize: 20,
+    // fontFamily: FONTFAMIY.TTCommonsMedium,
+    // fontSize: 20,
+    ...FONTS.body6SB,
     color: COLORS.black2,
   },
   content: {
@@ -134,8 +148,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: SIZES.radius,
   },
   title: {
-    fontFamily: FONTFAMIY.TTCommonsMedium,
-    fontSize: 19,
+    // fontFamily: FONTFAMIY.TTCommonsMedium,
+    // fontSize: 19,
+    ...FONTS.body3SB,
     color: COLORS.black2,
   },
   adressCardContainer: {
@@ -148,18 +163,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingRight: 15,
+   // paddingRight: 15,
   },
   left: {
-    flex: 0.7,
+    flex: 0.6,
   },
   right: {
-    flex: 0.3,
-    alignItems: 'center',
+    flex: 0.4,
+    alignItems: 'flex-end',
   },
   rightOption: {
-    fontFamily: FONTFAMIY.TTCommonsMedium,
-    fontSize: 16,
+    // fontFamily: FONTFAMIY.TTCommonsMedium,
+    // fontSize: 16,
+    ...FONTS.body4SB,
     color: COLORS.primary,
   },
   paymentCardContainer: {
@@ -189,22 +205,24 @@ const styles = StyleSheet.create({
   paymentMethodName: {
     fontFamily: FONTFAMIY.TTCommonsMedium,
     marginTop: 5,
-    color: COLORS.gray,
+    color: COLORS.gray5,
   },
   priceDetails: {
-    marginTop: '12%',
-    paddingHorizontal: '3%',
+    marginTop: 50,
+   // paddingHorizontal: '3%',
   },
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: '5%',
+  //  marginTop: '5%',
+  marginVertical: 8,
   },
   priceLabel: {
-    fontFamily: FONTFAMIY.TTCommonsMedium,
-    fontSize: 18,
-    color: COLORS.gray,
+    // fontFamily: FONTFAMIY.TTCommonsMedium,
+    // fontSize: 18,
+    ...FONTS.body4M,
+    color: COLORS.gray5,
   },
   row: {
     flexDirection: 'row',
@@ -212,8 +230,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   price: {
-    fontFamily: FONTFAMIY.TTCommonsMedium,
-    fontSize: 18,
+    // fontFamily: FONTFAMIY.TTCommonsMedium,
+    // fontSize: 18,
+    ...FONTS.body3M,
     marginLeft: 2,
   },
   submitBtnContainer: {
@@ -233,4 +252,18 @@ const styles = StyleSheet.create({
 
     elevation: 5,
   },
+  priceLabelHighLight: {
+    ...FONTS.body3SB,
+    marginTop: 7,
+  },
+  priceMTContainer: {
+    ...FONTS.body3SB,
+    marginTop: 7,
+    color: COLORS.black2
+  },
+  priceHighLight: {
+    ...FONTS.body3SB,
+    marginTop: 7,
+    color: COLORS.black2
+  }
 });

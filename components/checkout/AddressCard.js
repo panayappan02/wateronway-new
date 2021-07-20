@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import {COLORS, FONTFAMIY} from '../../constants';
+import {COLORS, FONTFAMIY, FONTS} from '../../constants';
 const AddressCard = () => {
   return (
     <View style={styles.container}>
@@ -41,38 +41,40 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    paddingHorizontal: 20
   },
   left: {
     flex: 0.7,
-    paddingLeft: '5%',
   },
   name: {
-    fontFamily: FONTFAMIY.TTCommonsMedium,
-    fontSize: 18,
+    // fontFamily: FONTFAMIY.TTCommonsMedium,
+    // fontSize: 18,
+    ...FONTS.body4SB,
     color: COLORS.black2,
   },
   address: {
-    marginTop: '5%',
+    marginTop: 7,
   },
   addressLine1: {
-    fontFamily: FONTFAMIY.TTCommonsRegular,
-    fontSize: 16,
+    // fontFamily: FONTFAMIY.TTCommonsRegular,
+    // fontSize: 16,
+    ...FONTS.body4M,
     lineHeight: 21,
-    color: COLORS.gray,
+    color: COLORS.black2,
   },
   addressLine2: {
-    fontFamily: FONTFAMIY.TTCommonsRegular,
-    fontSize: 16,
+    ...FONTS.body4M,
     lineHeight: 21,
-    color: COLORS.gray,
+    color: COLORS.black2,
   },
   right: {
     flex: 0.3,
-    alignItems: 'center',
+    alignItems: 'flex-end',
   },
   rightOption: {
-    fontFamily: FONTFAMIY.TTCommonsMedium,
-    fontSize: 16,
-    color: COLORS.primary,
+    // fontFamily: FONTFAMIY.TTCommonsMedium,
+    // fontSize: 16,
+    ...FONTS.body4SB,
+    color: COLORS.warning,
   },
 });

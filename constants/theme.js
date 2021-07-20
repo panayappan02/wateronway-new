@@ -79,6 +79,8 @@ export const FONTS = {
   h3M: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.h3, lineHeight: 16},
   h4M: {fontFamily: 'Metropolis-Medium',fontSize: SIZES.h4, lineHeight: 20 },
   h4MSB: {fontFamily: 'Metropolis-SemiBold',fontSize: SIZES.h4, lineHeight: 20 },
+  body3M: {fontFamily: 'Metropolis-Regular', fontSize: SIZES.body3},
+  body3SB: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.body3},
   body4M: {fontFamily: 'Metropolis-Regular', fontSize: SIZES.body4},
   body4SB: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.body4, lineHeight: 20},
   body6SB: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.body6, lineHeight: 22},
