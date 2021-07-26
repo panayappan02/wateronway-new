@@ -1,23 +1,64 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {COLORS, FONTFAMIY, FONTS} from '../../constants';
-const AddressCard = () => {
+import {useNavigation} from '@react-navigation/native';
+import {Checkbox} from 'react-native-paper';
+
+const AddressCard = ({
+  address,
+  readOnly,
+  selectedAddress,
+  setSelectedAddress,
+}) => {
+  const navigation = useNavigation();
+
+  const navigateToAddressList = () => {
+    navigation.navigate('AddressList');
+  };
+
+  const onPress = () => {
+    if (readOnly) {
+      navigateToAddressList();
+      return;
+    }
+  };
+
+  const checkBoxHandler = () => {
+    setSelectedAddress(address);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.left}>
-        <Text style={styles.name}>John Doe</Text>
+        <Text style={styles.name}>{address?.fullName}</Text>
         <View style={styles.address}>
           <Text style={styles.addressLine1} numberOfLines={1}>
-            3 NewBridge Court
+            {address?.Dno} {address?.Street},
           </Text>
           <Text style={styles.addressLine2} numberOfLines={1}>
-            Chino Hills , CA91709, United States
+            {address?.Map?.AddressLine}
           </Text>
+          {!readOnly && (
+            <View style={styles.checkBoxContainer}>
+              <Checkbox
+                color={COLORS.primary}
+                status={
+                  address?.address_id === selectedAddress?.address_id
+                    ? 'checked'
+                    : 'unchecked'
+                }
+                onPress={checkBoxHandler}
+              />
+              <Text style={styles.checkBoxLabel}>
+                Use as the Shipping Address
+              </Text>
+            </View>
+          )}
         </View>
       </View>
       <View style={styles.right}>
-        <TouchableOpacity activeOpacity={0.3}>
-          <Text style={styles.rightOption}>Change</Text>
+        <TouchableOpacity onPress={onPress} activeOpacity={0.3}>
+          <Text style={styles.rightOption}>{readOnly ? 'Change' : 'Edit'}</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -28,7 +69,7 @@ export default AddressCard;
 
 const styles = StyleSheet.create({
   container: {
-    height: 108,
+    // height: 115,
     backgroundColor: COLORS.white,
     borderRadius: 8,
     padding: 15,
@@ -41,7 +82,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   left: {
     flex: 0.7,
@@ -76,5 +117,15 @@ const styles = StyleSheet.create({
     // fontSize: 16,
     ...FONTS.body4SB,
     color: COLORS.warning,
+  },
+  checkBoxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: -10,
+    marginTop: 5,
+  },
+  checkBoxLabel: {
+    fontFamily: FONTFAMIY.MetropolisRegular,
+    color: COLORS.black1,
   },
 });

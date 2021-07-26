@@ -249,7 +249,7 @@ import {
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {useSelector, useDispatch} from 'react-redux';
-import {setUser, setUserId} from '../../redux/userSlice';
+import {setUser, setUserId, setUserDetails} from '../../redux/userSlice';
 import {useNavigation} from '@react-navigation/native';
 import {userHelper} from '../../utils';
 import firestore from '@react-native-firebase/firestore';
@@ -279,6 +279,7 @@ const ProfileInfo = () => {
     setLogoutLoading(true);
     await userHelper.removeUserId();
     dispatch(setUserId(null));
+    dispatch(setUserDetails(null));
     auth().signOut();
   };
 

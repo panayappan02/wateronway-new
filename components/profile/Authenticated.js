@@ -198,7 +198,7 @@ const Authenticated = ({fromOtherComponent}) => {
           await userHelper.saveUserId(snapshot.docs[0].id);
           dispatch(
             setUserDetails({
-              name: 'osnsnn',
+              name: snapshot.docs[0].data()?.name,
               email: snapshot.docs[0].data()?.email,
               phoneNumber: snapshot.docs[0].data()?.phoneNumber,
             }),

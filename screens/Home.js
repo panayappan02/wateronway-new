@@ -16,9 +16,14 @@ import {GeoFirestore} from 'geofirestore';
 import _ from 'lodash';
 import {useSelector, useDispatch} from 'react-redux';
 import {setSellerList} from '../redux/productSlice';
+import {setUserDetails} from '../redux/userSlice';
+
+// COLLECTION
+const usersCollection = firestore().collection('users');
 
 const Home = () => {
   const dispatch = useDispatch();
+  const userId = useSelector(state => state.user.userId);
   const [loading, setLoading] = useState(true);
   const [location, setLocation] = useState(null);
   const [sellers, setSellers] = useState([]);
@@ -31,8 +36,26 @@ const Home = () => {
   const productCollection = firestore().collection('products');
 
   useEffect(() => {
+    initializeUserDetails();
     getSellerDetails();
   }, []);
+
+  const initializeUserDetails = async () => {
+    try {
+      if (userId) {
+        const userDetailResponse = await usersCollection.doc(userId).get();
+        dispatch(
+          setUserDetails({
+            name: userDetailResponse.data()?.name,
+            email: userDetailResponse.data()?.email,
+            phoneNumber: userDetailResponse.data()?.phoneNumber,
+          }),
+        );
+      }
+    } catch (error) {
+      console.log('ERROR IN INITIALIZEUSERDETAILS IN HOME JS ', error);
+    }
+  };
 
   const calculateDistance = (lat1, lon1, lat2, lon2, unit) => {
     if (lat1 == lat2 && lon1 == lon2) {
@@ -236,7 +259,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     ...FONTS.body4M,
     // fontFamily: FONTFAMIY.TTCommonsMedium,
-     fontSize: 18,
+    fontSize: 18,
     width: '90%',
     color: COLORS.transparentBlack9,
   },
@@ -246,7 +269,7 @@ const styles = StyleSheet.create({
   productListTitle: {
     // fontFamily: FONTFAMIY.TTCommonsMedium,
     ...FONTS.h3M,
-  //  fontSize: 18,
+    //  fontSize: 18,
     marginLeft: 5,
     marginBottom: SIZES.base,
     color: COLORS.transparentBlack9,

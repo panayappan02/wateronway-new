@@ -12,6 +12,7 @@ const LocationSelection = ({route}) => {
   const navigation = useNavigation();
   const lat = route?.params?.lat;
   const lng = route?.params?.lng;
+  const to = route?.params?.to;
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -44,18 +45,29 @@ const LocationSelection = ({route}) => {
   };
 
   const onSubmit = async location => {
-    try {
-      const selectedLocation = {
-        latitude: location.latitude,
-        longitude: location.longitude,
-        address: location.address,
-      };
+    const selectedLocation = {
+      latitude: location.latitude,
+      longitude: location.longitude,
+      address: location.address,
+    };
 
-      await AsyncStorage.setItem('location', JSON.stringify(selectedLocation));
+    if (to) {
+      navigation.navigate(to, {
+        lat: selectedLocation.latitude,
+        lng: selectedLocation.longitude,
+        address: selectedLocation.address,
+      });
+    } else {
+      try {
+        await AsyncStorage.setItem(
+          'location',
+          JSON.stringify(selectedLocation),
+        );
 
-      navigation.dispatch(StackActions.replace('Tabs'));
-    } catch (error) {
-      console.log('ERROR ONSUBMIT IN LOCATIONSELECTION ', error);
+        navigation.dispatch(StackActions.replace('Tabs'));
+      } catch (error) {
+        console.log('ERROR ONSUBMIT IN LOCATIONSELECTION ', error);
+      }
     }
   };
 

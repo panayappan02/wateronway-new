@@ -6,6 +6,7 @@ import Orders from './Orders';
 import Payments from './Payments';
 import Profile from './Profile';
 import Checkout from './Checkout';
+import AddressList from './AddressList';
 
 export {
   Onboarding,
@@ -15,4 +16,5 @@ export {
   Payments,
   Profile,
   Checkout,
+  AddressList,
 };

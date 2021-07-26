@@ -19,9 +19,11 @@ import {
 } from '../components';
 import {COLORS, FONTFAMIY, icons, SIZES} from '../constants';
 import {FONTS} from '../constants/theme';
-import {Divider } from 'react-native-elements'
-import {useNavigation} from '@react-navigation/native';
+import {Divider} from 'react-native-elements';
+import {useNavigation, StackActions} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import {locationHelper} from '../utils';
+import _ from 'lodash';
 
 // Collection
 const userCollection = firestore().collection('users');
@@ -31,17 +33,46 @@ const Checkout = () => {
   const userId = useSelector(state => state.user.userId);
   const [loading, setLoading] = useState(true);
   const [addressList, setAddressList] = useState([]);
+  const [userDetailsAvailable, setUserDetailsAvailable] = useState(null);
+  const [defaultAddress, setDefaultAddress] = useState(null);
 
   useEffect(() => {
     checkAddress();
   }, [userId]);
 
   const checkAddress = async () => {
-    userCollection.doc(userId).onSnapshot(snapshot => {
-      if (snapshot.data()?.addresses === undefined) {
-        setLoading(false);
-      }
-    });
+    try {
+      const locationResponse = await locationHelper.getLocation();
+
+      userCollection.doc(userId).onSnapshot(snapshot => {
+        if (snapshot.data()?.addresses === undefined) {
+          if (userId && snapshot.data()) {
+            setUserDetailsAvailable(true);
+            navigation.dispatch(
+              StackActions.replace('LocationSelection', {
+                to: 'AddNewAddress',
+                lat: locationResponse.latitude,
+                lng: locationResponse.longitude,
+              }),
+            );
+          } else {
+            setUserDetailsAvailable(false);
+          }
+        } else {
+          // TODO: IF ADDRESS AVAILABLE
+          const defaultAddress = _.find(
+            snapshot.data()?.addresses,
+            function (address) {
+              return address.default === true;
+            },
+          );
+          setDefaultAddress(defaultAddress);
+          setLoading(false);
+        }
+      });
+    } catch (error) {
+      console.log('ERROR IN CHECKADDRESS IN CHECKOUT JS ', error);
+    }
   };
 
   const goBack = () => {
@@ -70,7 +101,7 @@ const Checkout = () => {
       <>
         <Text style={styles.title}>Delivery Address</Text>
         <View style={styles.adressCardContainer}>
-          <AddressCard />
+          <AddressCard readOnly address={defaultAddress} />
         </View>
       </>
     );
@@ -120,18 +151,23 @@ const Checkout = () => {
           </View>
         </View>
 
-<Divider/>
+        <Divider />
         <View style={styles.priceContainer}>
-          <Text style={[styles.priceLabel, styles.priceLabelHighLight]}>Total Amount:</Text>
+          <Text style={[styles.priceLabel, styles.priceLabelHighLight]}>
+            Total Amount:
+          </Text>
           <View style={styles.row}>
-            <Text style={styles.priceMTContainer}>₹<Text style={[styles.price, styles.priceHighLight]}>112</Text></Text>
+            <Text style={styles.priceMTContainer}>
+              ₹<Text style={[styles.price, styles.priceHighLight]}>112</Text>
+            </Text>
           </View>
         </View>
       </View>
     );
   }
 
-  if (!userId) return <Profile fromOtherComponent={true} />;
+  if (!userId || userDetailsAvailable === false)
+    return <Profile fromOtherComponent={true} />;
 
   if (loading)
     return (
@@ -140,7 +176,8 @@ const Checkout = () => {
       </View>
     );
 
-  if (!addressList.length) return <AddNewAddress />;
+  // TODO:
+  // if (!addressList.length) return <AddNewAddress />;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -162,8 +199,8 @@ export default Checkout;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-   // backgroundColor: COLORS.lightGray4,
-   backgroundColor: COLORS.BGColor
+    // backgroundColor: COLORS.lightGray4,
+    backgroundColor: COLORS.BGColor,
   },
   header: {
     height: 88 - StatusBar.currentHeight,
@@ -203,7 +240,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-   // paddingRight: 15,
+    // paddingRight: 15,
   },
   left: {
     flex: 0.6,
@@ -249,14 +286,14 @@ const styles = StyleSheet.create({
   },
   priceDetails: {
     marginTop: 50,
-   // paddingHorizontal: '3%',
+    // paddingHorizontal: '3%',
   },
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  //  marginTop: '5%',
-  marginVertical: 8,
+    //  marginTop: '5%',
+    marginVertical: 8,
   },
   priceLabel: {
     // fontFamily: FONTFAMIY.TTCommonsMedium,
@@ -299,11 +336,11 @@ const styles = StyleSheet.create({
   priceMTContainer: {
     ...FONTS.body3SB,
     marginTop: 7,
-    color: COLORS.black2
+    color: COLORS.black2,
   },
   priceHighLight: {
     ...FONTS.body3SB,
     marginTop: 7,
-    color: COLORS.black2
-  }
+    color: COLORS.black2,
+  },
 });

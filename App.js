@@ -11,6 +11,7 @@ import {
   Onboarding,
   LocationSelection,
   Checkout,
+  AddressList,
 } from './screens';
 import Tabs from './navigation/tabs';
 import {useSelector, useDispatch} from 'react-redux';
@@ -18,7 +19,7 @@ import {setUser, setUserId} from './redux/userSlice';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {userHelper} from './utils';
-import {Loading} from './components';
+import {AddNewAddress, Loading} from './components';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {COLORS} from './constants';
 import messaging from '@react-native-firebase/messaging';
@@ -28,14 +29,13 @@ import SpInAppUpdates, {
   StartUpdateOptions,
 } from 'sp-react-native-in-app-updates';
 
-
 // Collection
 const usersCollection = firestore().collection('users');
 
 const Stack = createStackNavigator();
 
 const inAppUpdates = new SpInAppUpdates(
-  false // isDebug
+  false, // isDebug
 );
 
 const App = () => {
@@ -58,32 +58,28 @@ const App = () => {
   }, []);
 
   useEffect(async () => {
-    await messaging().getToken().then((token) =>{
-    console.log(token)
-    })
-  },[])
+    await messaging()
+      .getToken()
+      .then(token => {
+        console.log(token);
+      });
+  }, []);
 
   useEffect(() => {
-    try{
-    inAppUpdates.checkNeedsUpdate().then((result) => {
-      if (result.shouldUpdate) {
-        let updateOptions = {};
-        if (Platform.OS === 'android') {
-          updateOptions = {
-            updateType: IAUUpdateKind.FLEXIBLE,
-          };
-        }
-        inAppUpdates.startUpdate(updateOptions);
+    try {
+      inAppUpdates.checkNeedsUpdate().then(result => {
+        if (result.shouldUpdate) {
+          let updateOptions = {};
+          if (Platform.OS === 'android') {
+            updateOptions = {
+              updateType: IAUUpdateKind.FLEXIBLE,
+            };
           }
-    });
-  } catch(err){
-    
-  }
-  },[])
-
- 
- 
- 
+          inAppUpdates.startUpdate(updateOptions);
+        }
+      });
+    } catch (err) {}
+  }, []);
 
   const checkOnboarding = async () => {
     try {
@@ -161,6 +157,8 @@ const App = () => {
           />
           <Stack.Screen name="Tabs" component={Tabs} />
           <Stack.Screen name="Checkout" component={Checkout} />
+          <Stack.Screen name="AddNewAddress" component={AddNewAddress} />
+          <Stack.Screen name="AddressList" component={AddressList} />
         </Stack.Navigator>
       </NavigationContainer>
     </Loading>

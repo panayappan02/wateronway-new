@@ -33,8 +33,8 @@ export const COLORS = {
   transparent: 'transparent',
 
   success: '#2AA952',
-  warning:'#F01F0E',
-  starYellow: '#FFBA49'
+  warning: '#F01F0E',
+  starYellow: '#FFBA49',
 };
 
 export const SIZES = {
@@ -77,14 +77,30 @@ export const FONTS = {
 
   h1M: {fontFamily: 'Metropolis-Bold', fontSize: SIZES.h1, lineHeight: 34},
   h3M: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.h3, lineHeight: 16},
-  h4M: {fontFamily: 'Metropolis-Medium',fontSize: SIZES.h4, lineHeight: 20 },
-  h4MSB: {fontFamily: 'Metropolis-SemiBold',fontSize: SIZES.h4, lineHeight: 20 },
+  h4M: {fontFamily: 'Metropolis-Medium', fontSize: SIZES.h4, lineHeight: 20},
+  h4MSB: {
+    fontFamily: 'Metropolis-SemiBold',
+    fontSize: SIZES.h4,
+    lineHeight: 20,
+  },
   body3M: {fontFamily: 'Metropolis-Regular', fontSize: SIZES.body3},
   body3SB: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.body3},
   body4M: {fontFamily: 'Metropolis-Regular', fontSize: SIZES.body4},
-  body4SB: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.body4, lineHeight: 20},
-  body6SB: {fontFamily: 'Metropolis-SemiBold', fontSize: SIZES.body6, lineHeight: 22},
-  body7M: {fontFamily: 'Metropolis-Regular', fontSize: SIZES.body7, lineHeight: 11},
+  body4SB: {
+    fontFamily: 'Metropolis-SemiBold',
+    fontSize: SIZES.body4,
+    lineHeight: 20,
+  },
+  body6SB: {
+    fontFamily: 'Metropolis-SemiBold',
+    fontSize: SIZES.body6,
+    lineHeight: 22,
+  },
+  body7M: {
+    fontFamily: 'Metropolis-Regular',
+    fontSize: SIZES.body7,
+    lineHeight: 11,
+  },
 };
 
 export const FONTFAMIY = {
@@ -93,6 +109,10 @@ export const FONTFAMIY = {
   TTCommonsExtraBold: 'TT Commons ExtraBold',
   TTCommonsRegular: 'TT Commons Regular',
   TTCommonsBold: 'TT Commons Bold',
+  MetropolisBold: 'Metropolis-Bold',
+  MetropolisSemiBold: 'Metropolis-SemiBold',
+  MetropolisMedium: 'Metropolis-Medium',
+  MetropolisRegular: 'Metropolis-Regular',
 };
 
 const appTheme = {COLORS, SIZES, FONTS, FONTFAMIY};
