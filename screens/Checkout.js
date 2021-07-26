@@ -166,13 +166,13 @@ const Checkout = () => {
     );
   }
 
-  if (!userId || userDetailsAvailable === false)
+  if (!userId && userDetailsAvailable === false)
     return <Profile fromOtherComponent={true} />;
 
   if (loading)
     return (
       <View style={styles.container}>
-        <Loading loading={true} color={COLORS.primary} />
+        <Loading loading={true} color={COLORS.primary} size={35} />
       </View>
     );
 

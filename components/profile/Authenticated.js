@@ -232,6 +232,7 @@ const Authenticated = ({fromOtherComponent}) => {
       }
     } catch (error) {
       console.log('ERROR SAVEUSERDETAILS IN AUTHENTICATED JS ', error);
+
       return {
         status: 'error',
         error,
