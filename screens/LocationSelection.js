@@ -13,7 +13,9 @@ const LocationSelection = ({route}) => {
   const lat = route?.params?.lat;
   const lng = route?.params?.lng;
   const to = route?.params?.to;
+  const addressToEditId = route?.params?.addressToEditId;
   const navigationBar = route?.params?.navigationBar;
+  const navigationLabel = route?.params?.navigationLabel;
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -57,6 +59,7 @@ const LocationSelection = ({route}) => {
         lat: selectedLocation.latitude,
         lng: selectedLocation.longitude,
         address: selectedLocation.address,
+        addressToEditId,
       });
     } else {
       try {
@@ -82,7 +85,9 @@ const LocationSelection = ({route}) => {
 
   return (
     <View style={styles.container}>
-      <NavigationBar label="Add Shipping Address" />
+      {navigationBar && (
+        <NavigationBar label={navigationLabel || 'Add Shipping Address'} />
+      )}
       <Loading loading={loading} color={COLORS.primary} size={40}>
         <LocationView
           apiKey={constants.googleMapApiKey}

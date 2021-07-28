@@ -3,6 +3,8 @@ import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {COLORS, FONTFAMIY, FONTS} from '../../constants';
 import {useNavigation} from '@react-navigation/native';
 import {Checkbox} from 'react-native-paper';
+import {useSelector, useDispatch} from 'react-redux';
+import {setAddressToEdit} from '../../redux/shippingAddressSlice';
 
 const AddressCard = ({
   address,
@@ -11,6 +13,7 @@ const AddressCard = ({
   setSelectedAddress,
 }) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const navigateToAddressList = () => {
     navigation.navigate('AddressList');
@@ -20,6 +23,17 @@ const AddressCard = ({
     if (readOnly) {
       navigateToAddressList();
       return;
+    } else {
+      dispatch(setAddressToEdit(address?.address_id));
+
+      navigation.navigate('LocationSelection', {
+        to: 'AddNewAddress',
+        lat: address?.Map?.Coordinates?._latitude,
+        lng: address?.Map?.Coordinates?._longitude,
+        navigationBar: true,
+        navigationLabel: 'Edit Shipping Address',
+        addressToEditId: address?.address_id,
+      });
     }
   };
 

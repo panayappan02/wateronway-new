@@ -73,11 +73,13 @@ const AddNewAddress = ({route}) => {
   const lat = route?.params?.lat;
   const lng = route?.params?.lng;
   const address = route?.params?.address;
+  const addressToEditId = route?.params?.addressToEditId;
   const [loading, setLoading] = useState(true);
   const [dropdown, setDropdown] = useState(0);
   const [isLiftAvailable, setIsLiftAvailable] = useState(
     liftAvailableOptions[0],
   );
+  const [addressList, setAddressList] = useState([]);
   const [addressType, setAddressType] = useState(addressTypeList[0]);
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
@@ -105,14 +107,38 @@ const AddNewAddress = ({route}) => {
 
   const initializeValues = async () => {
     try {
-      const locationResponse = await locationHelper.getLocation();
-
       if (lat && lng) {
         setLatitude(lat);
         setLongitude(lng);
       } else {
+        const locationResponse = await locationHelper.getLocation();
         setLatitude(locationResponse.latitude);
         setLongitude(locationResponse.longitude);
+      }
+
+      if (addressToEditId) {
+        const userResponse = await usersCollection.doc(userId).get();
+        setAddressList(userResponse.data()?.addresses);
+        let addressToEditRef = _.find(
+          userResponse.data()?.addresses,
+          function (address) {
+            return address?.address_id === addressToEditId;
+          },
+        );
+
+        // LOAD PREVIOUS VALUES FOR EDITING
+        setValues({
+          ...values,
+          fullName: addressToEditRef?.fullName,
+          mobileNumber: addressToEditRef?.mobileNumber,
+          doorNumber: addressToEditRef?.Dno,
+          street: addressToEditRef?.Street,
+          landmark: addressToEditRef?.Landmark,
+        });
+
+        setAddressType(addressToEditRef?.AddressType);
+        setDropdown(addressToEditRef?.floor);
+        setIsLiftAvailable(addressToEditRef?.isLiftAvailable);
       }
 
       setLoading(false);
@@ -155,19 +181,46 @@ const AddNewAddress = ({route}) => {
         ),
       },
       Street: street,
-      address_id: nanoid(9),
+      address_id: addressToEditId,
       deleted: false,
     };
 
     try {
       if (btnLoading) return;
       setBtnLoading(true);
+      const popAction = CommonActions.reset({
+        index: 1,
+        routes: [
+          {name: 'Tabs'},
+          {
+            name: 'AddressList',
+          },
+        ],
+      });
 
       if (!fullName || !mobileNumber || !doorNumber || !street || !landmark) {
         alert('Please Fill All Fields');
         setBtnLoading(false);
         return;
-      } else {
+      }
+      // EDIT
+      if (addressToEditId) {
+        let addressListRef = addressList;
+        let addressToEditRef = _.findIndex(addressListRef, function (address) {
+          return address?.address_id === addressToEditId;
+        });
+        addressListRef.splice(addressToEditRef, 1, data);
+
+        await usersCollection.doc(userId).update({
+          addresses: addressListRef,
+        });
+        setBtnLoading(false);
+        navigation.dispatch(popAction);
+
+        return;
+      }
+      // SAVE
+      else {
         const userResponse = await usersCollection.doc(userId).get();
         if (userResponse.data()?.addresses?.length) {
           let addressesRef = userResponse.data()?.addresses;
@@ -189,17 +242,7 @@ const AddNewAddress = ({route}) => {
         }
         setValues({...values, doorNumber: '', street: '', landmark: ''});
 
-        navigation.dispatch(
-          CommonActions.reset({
-            index: 1,
-            routes: [
-              {name: 'Tabs'},
-              {
-                name: 'AddressList',
-              },
-            ],
-          }),
-        );
+        navigation.dispatch(popAction);
       }
     } catch (error) {
       console.log('ERROR IN ONSUBMIT IN ADDNEWADDRESS JS ', error);

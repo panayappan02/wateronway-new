@@ -32,6 +32,7 @@ const usersCollection = firestore().collection('users');
 const AddressList = () => {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const userId = useSelector(state => state.user.userId);
   const [loading, setLoading] = useState(true);
   const [addressList, setAddressList] = useState([]);
