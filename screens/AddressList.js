@@ -18,7 +18,11 @@ import {COLORS, FONTFAMIY} from '../constants';
 import {useIsFocused} from '@react-navigation/native';
 import {useSelector, useDispatch} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
-import {useNavigation, StackActions} from '@react-navigation/native';
+import {
+  useNavigation,
+  StackActions,
+  CommonActions,
+} from '@react-navigation/native';
 import {locationHelper} from '../utils';
 import _ from 'lodash';
 
@@ -43,7 +47,8 @@ const AddressList = () => {
     try {
       const userResponse = await usersCollection.doc(userId).get();
       if (userResponse.data()?.addresses) {
-        setAddressList(userResponse.data()?.addresses);
+        let reverseAddressList = _.reverse(userResponse.data()?.addresses);
+        setAddressList(reverseAddressList);
         const defaultAddress = _.find(
           userResponse.data()?.addresses,
           function (address) {
@@ -68,6 +73,7 @@ const AddressList = () => {
         to: 'AddNewAddress',
         lat: locationResponse.latitude,
         lng: locationResponse.longitude,
+        navigationBar: true,
       });
     } catch (error) {
       console.log('ERROR IN NAVIGATETOADDNEWADDRESS IN ADDRESSLIST JS ', error);
@@ -77,10 +83,14 @@ const AddressList = () => {
   const onSubmit = async () => {
     if (btnLoading) return;
     setBtnLoading(true);
+    const popAction = CommonActions.reset({
+      index: 1,
+      routes: [{name: 'Tabs'}, {name: 'Checkout'}],
+    });
 
     try {
       if (selectedAddress?.address_id === defaultAddressRef?.address_id) {
-        navigation.dispatch(StackActions.replace('Checkout'));
+        navigation.dispatch(popAction);
       } else {
         let addressListRef = addressList;
         let defaultAddressIndex = _.findIndex(
@@ -111,7 +121,7 @@ const AddressList = () => {
           addresses: addressListRef,
         });
 
-        navigation.dispatch(StackActions.replace('Checkout'));
+        navigation.dispatch(popAction);
       }
     } catch (error) {
       console.log('ERROR IN ONSUBMIT IN ADDRESSLIST JS ', error);

@@ -1,4 +1,4 @@
-import locationHelper from './location';
+import locationHelper, {calculateDistance} from './location';
 import userHelper from './user';
 
-export {locationHelper, userHelper};
+export {locationHelper, userHelper, calculateDistance};

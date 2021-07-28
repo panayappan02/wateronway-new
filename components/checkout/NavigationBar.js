@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {VectorIcon} from '..';
 import {useNavigation} from '@react-navigation/native';
-import {COLORS, FONTFAMIY} from '../../constants';
+import {COLORS, FONTFAMIY, FONTS} from '../../constants';
 
 const NavigationBar = ({label}) => {
   const navigation = useNavigation();
@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     height: 88 - StatusBar.currentHeight,
     backgroundColor: COLORS.headerBackground,
     justifyContent: 'center',
+    elevation: 3,
   },
   backIcon: {
     marginLeft: '2%',
@@ -47,8 +48,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     position: 'absolute',
     alignSelf: 'center',
-    fontFamily: FONTFAMIY.TTCommonsMedium,
-    fontSize: 20,
+    ...FONTS.body6SB,
     color: COLORS.black2,
   },
 });

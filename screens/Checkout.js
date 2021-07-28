@@ -15,26 +15,39 @@ import {
   AddressCard,
   Button,
   Loading,
+  NavigationBar,
   VectorIcon,
 } from '../components';
 import {COLORS, FONTFAMIY, icons, SIZES} from '../constants';
 import {FONTS} from '../constants/theme';
 import {Divider} from 'react-native-elements';
-import {useNavigation, StackActions} from '@react-navigation/native';
+import {
+  useNavigation,
+  StackActions,
+  useIsFocused,
+} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
-import {locationHelper} from '../utils';
+import {calculateDistance, locationHelper} from '../utils';
 import _ from 'lodash';
+import {setSelectedProduct} from '../redux/productSlice';
 
 // Collection
 const userCollection = firestore().collection('users');
+const orderCollection = firestore().collection('orders');
 
 const Checkout = () => {
   const navigation = useNavigation();
   const userId = useSelector(state => state.user.userId);
+  const userDetails = useSelector(state => state.user.userDetails);
+  const selectedSeller = useSelector(state => state.product.selectedSeller);
+  const selectedProduct = useSelector(state => state.product.selectedProduct);
   const [loading, setLoading] = useState(true);
   const [addressList, setAddressList] = useState([]);
   const [userDetailsAvailable, setUserDetailsAvailable] = useState(null);
   const [defaultAddress, setDefaultAddress] = useState(null);
+  const [isDeliverable, setIsDeliverable] = useState(null);
+  const [deliveryCharge, setDeliveryCharge] = useState(0);
+  const [btnLoading, setBtnLoading] = useState(false);
 
   useEffect(() => {
     checkAddress();
@@ -53,6 +66,7 @@ const Checkout = () => {
                 to: 'AddNewAddress',
                 lat: locationResponse.latitude,
                 lng: locationResponse.longitude,
+                navigationBar: true,
               }),
             );
           } else {
@@ -66,7 +80,32 @@ const Checkout = () => {
               return address.default === true;
             },
           );
+
+          if (
+            defaultAddress?.isLiftAvailable !== 'yes' &&
+            defaultAddress?.floor > 0
+          ) {
+            setDeliveryCharge(
+              selectedProduct?.deliveryCharges[`${defaultAddress?.floor}`] *
+                selectedProduct?.qty,
+            );
+          }
+
           setDefaultAddress(defaultAddress);
+          const distance = calculateDistance(
+            defaultAddress?.Map.Coordinates._latitude,
+            defaultAddress?.Map.Coordinates._longitude,
+            selectedSeller?.sellerLocation.latitude,
+            selectedSeller?.sellerLocation.longitude,
+            'K',
+          );
+
+          if (distance <= selectedSeller?.deliverableDistance) {
+            setIsDeliverable(true);
+          } else {
+            setIsDeliverable(false);
+          }
+
           setLoading(false);
         }
       });
@@ -75,26 +114,96 @@ const Checkout = () => {
     }
   };
 
-  const goBack = () => {
-    navigation.goBack();
+  const onPlaceOrderByCashOnDelivery = () => {
+    if (btnLoading) return;
+    setBtnLoading(true);
+
+    try {
+      var currentTime = new Date();
+      var currentOffset = currentTime.getTimezoneOffset();
+      var ISTOffset = 330;
+      var ISTTime = new Date(
+        currentTime.getTime() + (ISTOffset + currentOffset) * 60000,
+      );
+
+      orderCollection
+        .add({
+          Charges: {
+            CartPrice: selectedProduct?.mrp * selectedProduct?.qty,
+            DC: deliveryCharge,
+            Discount:
+              (selectedProduct?.mrp - selectedProduct?.price) *
+              selectedProduct?.qty,
+            Tax: selectedProduct?.tax,
+            Total:
+              selectedProduct?.price * selectedProduct?.qty +
+              deliveryCharge +
+              selectedProduct?.tax,
+          },
+          Customer: {
+            Tel: userDetails?.phoneNumber,
+            address: {
+              AddressType: defaultAddress?.AddressType,
+              Dno: defaultAddress?.Dno,
+              Landmark: defaultAddress?.Landmark,
+              Map: {
+                // TODO: ADDRESSLINE
+                // AddressLine: defaultAddress?.Map?.AddressLine,
+                Coordinates: new firestore.GeoPoint(
+                  defaultAddress?.Map?.Coordinates?._latitude,
+                  defaultAddress?.Map?.Coordinates?._longitude,
+                ),
+              },
+              Street: defaultAddress?.Street,
+              address_id: defaultAddress?.address_id,
+              deleted: defaultAddress?.deleted,
+              floor: defaultAddress?.floor,
+              fullName: defaultAddress?.fullName,
+              isLiftAvailable: defaultAddress?.isLiftAvailable,
+              mobileNumber: defaultAddress?.mobileNumber,
+            },
+            email: userDetails?.email,
+            id: userId,
+            name: userDetails?.name,
+          },
+          Product: {
+            Count: selectedProduct?.qty,
+            Name: selectedProduct?.product_name,
+            id: selectedProduct?.product_id,
+          },
+          Seller: {
+            Name: selectedSeller?.sellerName,
+            Tel: selectedSeller?.sellerMobile,
+            id: selectedSeller?.sellerId,
+          },
+          oTime: ISTTime,
+          payment: {
+            amountPaid: 0,
+            paymentMode: 'cash on delivery',
+          },
+          sTime: currentTime,
+          status: 'Ordered',
+        })
+        .then(() => {
+          navigation.dispatch(StackActions.replace('PaymentSuccess'));
+        })
+        .catch(error => {
+          setBtnLoading(false);
+          console.log('ERROR IN CREATING ORDER ', error);
+        });
+    } catch (error) {
+      console.log(
+        'ERROR IN ONPLACEORDERBYCASHONDELIVERY IN CHECKOUT JS ',
+        error,
+      );
+    } finally {
+      setBtnLoading(false);
+    }
   };
 
-  function renderHeader() {
-    return (
-      <View style={styles.header}>
-        <TouchableOpacity onPress={goBack}>
-          <VectorIcon.Ionicons
-            name="chevron-back"
-            size={25}
-            color={COLORS.black2}
-            style={styles.backIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Checkout</Text>
-        <View></View>
-      </View>
-    );
-  }
+  const onSubmit = () => {
+    onPlaceOrderByCashOnDelivery();
+  };
 
   function renderAddress() {
     return (
@@ -125,43 +234,83 @@ const Checkout = () => {
       </View>
     );
   }
-
   function renderPriceDetails() {
     return (
       <View style={styles.priceDetails}>
-        <View style={styles.priceContainer}>
-          <Text style={styles.priceLabel}>Cart Total:</Text>
-          <View style={styles.row}>
-            <VectorIcon.FontAwesome name="rupee" size={13} />
-            <Text style={styles.price}>112</Text>
-          </View>
-        </View>
-        <View style={styles.priceContainer}>
-          <Text style={styles.priceLabel}>Delivery Charges:</Text>
-          <View style={styles.row}>
-            <VectorIcon.FontAwesome name="rupee" size={13} />
-            <Text style={styles.price}>112</Text>
-          </View>
-        </View>
-        <View style={styles.priceContainer}>
-          <Text style={styles.priceLabel}>Discount:</Text>
-          <View style={styles.row}>
-            <VectorIcon.FontAwesome name="rupee" size={13} />
-            <Text style={styles.price}>112</Text>
-          </View>
-        </View>
+        {isDeliverable ? (
+          <>
+            <View style={styles.priceContainer}>
+              <Text style={styles.priceLabel}>Cart Total:</Text>
+              <View style={styles.row}>
+                <VectorIcon.FontAwesome name="rupee" size={13} />
+                <Text style={styles.price}>
+                  {selectedProduct?.mrp * selectedProduct?.qty}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.priceContainer}>
+              <Text style={styles.priceLabel}>Delivery Charges:</Text>
+              <View style={styles.row}>
+                {deliveryCharge ? (
+                  <>
+                    <VectorIcon.FontAwesome name="rupee" size={13} />
+                    <Text style={styles.price}>{deliveryCharge}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text style={[styles.price, {color: COLORS.primary}]}>
+                      Free
+                    </Text>
+                  </>
+                )}
+              </View>
+            </View>
+            <View style={styles.priceContainer}>
+              <Text style={styles.priceLabel}>Discount:</Text>
+              <View style={styles.row}>
+                <VectorIcon.FontAwesome name="rupee" size={13} />
+                <Text style={styles.price}>
+                  {(selectedProduct?.mrp - selectedProduct?.price) *
+                    selectedProduct?.qty}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.priceContainer}>
+              <Text style={styles.priceLabel}>Tax:</Text>
+              <View style={styles.row}>
+                <VectorIcon.FontAwesome name="rupee" size={13} />
+                <Text style={styles.price}>{selectedProduct?.tax}</Text>
+              </View>
+            </View>
 
-        <Divider />
-        <View style={styles.priceContainer}>
-          <Text style={[styles.priceLabel, styles.priceLabelHighLight]}>
-            Total Amount:
-          </Text>
-          <View style={styles.row}>
-            <Text style={styles.priceMTContainer}>
-              ₹<Text style={[styles.price, styles.priceHighLight]}>112</Text>
+            <Divider />
+            <View style={styles.priceContainer}>
+              <Text style={[styles.priceLabel, styles.priceLabelHighLight]}>
+                Total Amount:
+              </Text>
+              <View style={styles.row}>
+                <Text style={styles.priceMTContainer}>
+                  ₹
+                  <Text style={[styles.price, styles.priceHighLight]}>
+                    {selectedProduct?.price * selectedProduct?.qty +
+                      deliveryCharge +
+                      selectedProduct?.tax}
+                  </Text>
+                </Text>
+              </View>
+            </View>
+          </>
+        ) : (
+          <View style={styles.notDeliverMsgContainer}>
+            <Image
+              source={icons.notDeliverable}
+              style={styles.notDeliverMsgImg}
+            />
+            <Text style={styles.notDeliverMsg}>
+              Can't Deliver at this Address
             </Text>
           </View>
-        </View>
+        )}
       </View>
     );
   }
@@ -176,19 +325,23 @@ const Checkout = () => {
       </View>
     );
 
-  // TODO:
-  // if (!addressList.length) return <AddNewAddress />;
-
   return (
     <SafeAreaView style={styles.container}>
-      {renderHeader()}
+      <NavigationBar label="Checkout" />
+
       <View style={styles.content}>
         {renderAddress()}
         {renderPayment()}
         {renderPriceDetails()}
       </View>
       <View style={styles.submitBtnContainer}>
-        <Button label="Submit Order" containerStyle={styles.submitBtn} />
+        <Button
+          onPress={onSubmit}
+          loading={btnLoading}
+          label="Submit Order"
+          disabled={!isDeliverable}
+          containerStyle={styles.submitBtn}
+        />
       </View>
     </SafeAreaView>
   );
@@ -199,27 +352,9 @@ export default Checkout;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: COLORS.lightGray4,
     backgroundColor: COLORS.BGColor,
   },
-  header: {
-    height: 88 - StatusBar.currentHeight,
-    backgroundColor: COLORS.headerBackground,
-    justifyContent: 'center',
-    padding: 15,
-    elevation: 5,
-  },
-  backIcon: {
-    marginLeft: '2%',
-  },
-  headerTitle: {
-    position: 'absolute',
-    alignSelf: 'center',
-    // fontFamily: FONTFAMIY.TTCommonsMedium,
-    // fontSize: 20,
-    ...FONTS.body6SB,
-    color: COLORS.black2,
-  },
+
   content: {
     paddingVertical: 20,
     paddingHorizontal: SIZES.radius,
@@ -342,5 +477,21 @@ const styles = StyleSheet.create({
     ...FONTS.body3SB,
     marginTop: 7,
     color: COLORS.black2,
+  },
+  notDeliverMsgContainer: {
+    height: '60%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  notDeliverMsgImg: {
+    height: 50,
+    width: 50,
+    tintColor: COLORS.gray,
+  },
+  notDeliverMsg: {
+    marginTop: 20,
+    fontFamily: FONTFAMIY.MetropolisRegular,
+    fontSize: 20,
+    color: COLORS.black1,
   },
 });

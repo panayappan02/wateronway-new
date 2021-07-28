@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import LocationView from 'react-native-location-view';
-import {Loading} from '../components';
+import {Loading, NavigationBar} from '../components';
 import {COLORS, constants, FONTFAMIY} from '../constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
@@ -13,6 +13,7 @@ const LocationSelection = ({route}) => {
   const lat = route?.params?.lat;
   const lng = route?.params?.lng;
   const to = route?.params?.to;
+  const navigationBar = route?.params?.navigationBar;
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -81,6 +82,7 @@ const LocationSelection = ({route}) => {
 
   return (
     <View style={styles.container}>
+      <NavigationBar label="Add Shipping Address" />
       <Loading loading={loading} color={COLORS.primary} size={40}>
         <LocationView
           apiKey={constants.googleMapApiKey}

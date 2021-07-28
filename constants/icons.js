@@ -7,7 +7,8 @@ const waterBottle = require('../assets/icons/water-bottle.png');
 const myOrders = require('../assets/icons/myOrders.png');
 const getHelp = require('../assets/icons/getHelp.png');
 const cod = require('../assets/icons/cash-on-delivery.png');
-const ChevronLeft  = require('../assets/icons/chevron-left.png');
+const ChevronLeft = require('../assets/icons/chevron-left.png');
+const notDeliverable = require('../assets/icons/no-home.png');
 
 export default {
   home,
@@ -19,5 +20,6 @@ export default {
   myOrders,
   getHelp,
   cod,
-  ChevronLeft
+  ChevronLeft,
+  notDeliverable,
 };

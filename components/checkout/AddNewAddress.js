@@ -18,6 +18,7 @@ import {
   useNavigation,
   useIsFocused,
   StackActions,
+  CommonActions,
 } from '@react-navigation/native';
 import {RadioButton} from 'react-native-paper';
 import {Button} from '../../components';
@@ -187,7 +188,18 @@ const AddNewAddress = ({route}) => {
           });
         }
         setValues({...values, doorNumber: '', street: '', landmark: ''});
-        navigation.dispatch(StackActions.replace('Checkout'));
+
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [
+              {name: 'Tabs'},
+              {
+                name: 'AddressList',
+              },
+            ],
+          }),
+        );
       }
     } catch (error) {
       console.log('ERROR IN ONSUBMIT IN ADDNEWADDRESS JS ', error);

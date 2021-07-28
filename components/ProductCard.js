@@ -12,14 +12,15 @@ import {
   setSelectedProduct,
   toggleProductModal,
   setSelectedSeller,
-  setQty
+  setQty,
 } from '../redux/productSlice';
 import {COLORS, SIZES, images, FONTS, FONTFAMIY, icons} from '../constants';
 import _ from 'lodash';
-import RBSheet from "react-native-raw-bottom-sheet";
+import RBSheet from 'react-native-raw-bottom-sheet';
 import {useNavigation} from '@react-navigation/native';
 
 const ProductCard = ({product}) => {
+  const {id: product_id} = product;
   const {
     image_url,
     product_name,
@@ -27,10 +28,15 @@ const ProductCard = ({product}) => {
     mrp,
     price,
     seller_id,
+    deliveryCharges,
+    tax,
   } = product.item;
-  const {productModalVisible, selectedSeller, sellerList, selectedProduct} = useSelector(
-    state => state.product,
-  );
+  const {
+    productModalVisible,
+    selectedSeller,
+    sellerList,
+    selectedProduct,
+  } = useSelector(state => state.product);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const refRBSheet = useRef();
@@ -41,30 +47,33 @@ const ProductCard = ({product}) => {
 
     dispatch(
       setSelectedProduct({
+        product_id,
         product_name,
         image_url,
         quantity,
         mrp,
         price,
         qty: 1,
+        deliveryCharges,
+        tax,
       }),
     );
     refRBSheet.current.open();
-  //  dispatch(toggleProductModal());
+    //  dispatch(toggleProductModal());
   };
 
-  const quantitySelected = (quantity) =>{
+  const quantitySelected = quantity => {
     dispatch(setQty(quantity));
     refRBSheet.current.close();
     navigation.navigate('Checkout');
-  }
+  };
   return (
     <>
       <View style={styles.productCardWrapper}>
         <View style={styles.productCardContainer}>
           <Image source={{uri: image_url}} style={styles.productImage} />
           <View style={styles.productCardBottomContainer}>
-          <Rating
+            <Rating
               ratingCount={5}
               imageSize={18}
               readonly
@@ -72,7 +81,7 @@ const ProductCard = ({product}) => {
             />
             <Text style={styles.litre}>{quantity}</Text>
             <Text style={styles.productName}>{product_name}</Text>
-           
+
             <View style={styles.productCardFooter}>
               <View style={styles.footerLeftSide}>
                 <Text style={[styles.price, styles.cartPrice]}>
@@ -85,7 +94,11 @@ const ProductCard = ({product}) => {
                 </Text>
               </View>
               <View>
-                <TouchableOpacity style={styles.btn} onPress={()=> {buyNow()}}>
+                <TouchableOpacity
+                  style={styles.btn}
+                  onPress={() => {
+                    buyNow();
+                  }}>
                   <Text style={styles.btnText}>Buy Now</Text>
                 </TouchableOpacity>
               </View>
@@ -95,62 +108,124 @@ const ProductCard = ({product}) => {
       </View>
 
       <RBSheet
-          ref={refRBSheet}
-          height={360}
-          openDuration={500}
-          closeOnDragDown={true}
+        ref={refRBSheet}
+        height={360}
+        openDuration={500}
+        closeOnDragDown={true}
         closeOnPressMask={false}
-          customStyles={{
-            container: {
-              padding: 14,
-              alignItems: "center",
-              backgroundColor: COLORS.BGColor,
-              borderTopEndRadius: 40,
-              borderTopStartRadius:  40
-            },
-            draggableIcon: {
-              width: 60,
-              height: 6,
-              backgroundColor: COLORS.gray5
-            }
-          }}
-        >
-          <View style={styles.modalContainer}>
-          <View><Text style={styles.productCountTitle}>Select Quantity</Text></View>
+        customStyles={{
+          container: {
+            padding: 14,
+            alignItems: 'center',
+            backgroundColor: COLORS.BGColor,
+            borderTopEndRadius: 40,
+            borderTopStartRadius: 40,
+          },
+          draggableIcon: {
+            width: 60,
+            height: 6,
+            backgroundColor: COLORS.gray5,
+          },
+        }}>
+        <View style={styles.modalContainer}>
+          <View>
+            <Text style={styles.productCountTitle}>Select Quantity</Text>
+          </View>
 
           <View style={styles.quantityCardsContainer}>
-         <TouchableOpacity style={styles.quantityCard} onPress={() => quantitySelected(1)}><Text style={styles.quantityText}>1</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(2)}><Text style={styles.quantityText}>2</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(3)}><Text style={styles.quantityText}>3</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(4)}><Text style={styles.quantityText}>4</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(5)}><Text style={styles.quantityText}>5</Text></TouchableOpacity>
-           </View>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(1)}>
+              <Text style={styles.quantityText}>1</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(2)}>
+              <Text style={styles.quantityText}>2</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(3)}>
+              <Text style={styles.quantityText}>3</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(4)}>
+              <Text style={styles.quantityText}>4</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(5)}>
+              <Text style={styles.quantityText}>5</Text>
+            </TouchableOpacity>
+          </View>
 
-           <View style={styles.quantityCardsContainer}>
-           <TouchableOpacity style={styles.quantityCard} onPress={() => quantitySelected(6)}><Text style={styles.quantityText}>6</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(7)}><Text style={styles.quantityText}>7</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(8)}><Text style={styles.quantityText}>8</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(9)}><Text style={styles.quantityText}>9</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(10)}><Text style={styles.quantityText}>10</Text></TouchableOpacity>
-           </View>
+          <View style={styles.quantityCardsContainer}>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(6)}>
+              <Text style={styles.quantityText}>6</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(7)}>
+              <Text style={styles.quantityText}>7</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(8)}>
+              <Text style={styles.quantityText}>8</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(9)}>
+              <Text style={styles.quantityText}>9</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(10)}>
+              <Text style={styles.quantityText}>10</Text>
+            </TouchableOpacity>
+          </View>
 
-           <View style={styles.quantityCardsContainer}>
-           <TouchableOpacity style={styles.quantityCard} onPress={() => quantitySelected(11)}><Text style={styles.quantityText}>11</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(12)}><Text style={styles.quantityText}>12</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(13)}><Text style={styles.quantityText}>13</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(14)}><Text style={styles.quantityText}>14</Text></TouchableOpacity>
-           <TouchableOpacity style={styles.quantityCard} onPress={()=>quantitySelected(15)}><Text style={styles.quantityText}>15</Text></TouchableOpacity>
-           </View>
+          <View style={styles.quantityCardsContainer}>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(11)}>
+              <Text style={styles.quantityText}>11</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(12)}>
+              <Text style={styles.quantityText}>12</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(13)}>
+              <Text style={styles.quantityText}>13</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(14)}>
+              <Text style={styles.quantityText}>14</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.quantityCard}
+              onPress={() => quantitySelected(15)}>
+              <Text style={styles.quantityText}>15</Text>
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.moreDiscountContainer}>
-            <Text style={styles.needMoreText}>Need More? <Text style={styles.contactUsText}>CONTACT US</Text> for volumetric discounts.</Text>
+            <Text style={styles.needMoreText}>
+              Need More? <Text style={styles.contactUsText}>CONTACT US</Text>{' '}
+              for volumetric discounts.
+            </Text>
           </View>
 
-           {/* <View style={styles.checkoutButtonContainer}><Text style={styles.checkoutBtnText}>CHECK OUT</Text></View> */}
-
-          </View>
-
-        </RBSheet>
+          {/* <View style={styles.checkoutButtonContainer}><Text style={styles.checkoutBtnText}>CHECK OUT</Text></View> */}
+        </View>
+      </RBSheet>
 
       <ProductModal />
     </>
@@ -239,22 +314,22 @@ const styles = StyleSheet.create({
     width: 90,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 1
+    elevation: 1,
   },
   btnText: {
     color: COLORS.white,
-    ...FONTS.body4M
+    ...FONTS.body4M,
     // fontFamily: FONTFAMIY.TTCommonsMedium,
     // fontSize: 16,
   },
   modalContainer: {
     padding: 16,
-    width:'100%'
+    width: '100%',
   },
   productCountTitle: {
-     ...FONTS.body6SB,
-     textAlign:'center',
-     color: COLORS.black2
+    ...FONTS.body6SB,
+    textAlign: 'center',
+    color: COLORS.black2,
   },
   quantityCardsContainer: {
     marginTop: 22,
@@ -269,10 +344,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: COLORS.white,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   quantityText: {
-    ...FONTS.body4SB
+    ...FONTS.body4SB,
   },
   checkoutButtonContainer: {
     width: 343,
@@ -282,21 +357,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 30,
     backgroundColor: COLORS.primary,
-    borderRadius: 25
+    borderRadius: 25,
   },
   checkoutBtnText: {
     ...FONTS.body4M,
-    color: COLORS.white
+    color: COLORS.white,
   },
   moreDiscountContainer: {
-    marginTop: 30
+    marginTop: 30,
   },
   needMoreText: {
     ...FONTS.h3M,
-    color: COLORS.black2
+    color: COLORS.black2,
   },
   contactUsText: {
     ...FONTS.h4MSB,
-    color: COLORS.primary
-  }
+    color: COLORS.primary,
+  },
 });
