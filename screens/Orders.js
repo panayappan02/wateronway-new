@@ -41,9 +41,7 @@ const Orders = () => {
 
   const onEndReached = () => {
     setListLoading(true);
-    setTimeout(() => {
-      setLimit(limit + 4);
-    }, 500);
+    setLimit(limit + 4);
   };
 
   function renderOrderList() {
@@ -55,7 +53,7 @@ const Orders = () => {
 
     return (
       <>
-        <View style={styles.orderListContainer}>
+        <View style={[styles.orderListContainer]}>
           <FlatList
             data={orderList}
             keyExtractor={(item, index) => `order-card-${index}`}
@@ -65,7 +63,11 @@ const Orders = () => {
             showsVerticalScrollIndicator={false}
           />
         </View>
-        <Loading loading={listLoading} color={COLORS.primary} />
+        <Loading
+          loading={listLoading}
+          color={COLORS.primary}
+          type={'ThreeBounce'}
+        />
       </>
     );
   }
