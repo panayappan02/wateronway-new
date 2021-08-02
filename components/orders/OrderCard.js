@@ -1,30 +1,62 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {COLORS, FONTFAMIY, FONTS, SIZES} from '../../constants/theme';
+import {convertToddmmyy} from '../../utils';
+import {useNavigation} from '@react-navigation/native';
 
-const OrderCard = () => {
+const OrderCard = ({order, lastItem}) => {
+  const date = convertToddmmyy(order?.item?.oTime);
+  const navigation = useNavigation();
+
+  const navigateToOrderDetails = () => {
+    navigation.navigate('OrderDetails', {
+      order,
+    });
+  };
+
   return (
-    <View style={styles.OrderCard}>
+    <View style={[styles.OrderCard, {marginBottom: lastItem ? 15 : 0}]}>
       <View style={styles.TitleRow}>
-      <Text style={styles.OrderId} ellipsizeMode='tail' numberOfLines={1}>Mineral Water (20L)</Text>
-      <Text style={styles.OrderDate}>15/05/2021</Text>
+        <Text style={styles.OrderId} ellipsizeMode="tail" numberOfLines={1}>
+          {order?.item?.Product?.Name}
+        </Text>
+        <Text style={styles.OrderDate}>{date}</Text>
       </View>
-     
-     <View style={styles.CardDetailsContainer}>
-       <Text style={styles.DetailsTitle}>Seller: <Text style={styles.DetailsSubTitle}>RSV Waters</Text></Text>
 
-       <View style={styles.TitleRowwithM}>
-       <Text style={styles.DetailsTitle}>Quantity: <Text style={styles.DetailsSubTitleBold}>3</Text></Text>
-       <Text style={styles.DetailsTitle}>Total Amount: <Text style={styles.DetailsSubTitleBold}>₹113</Text></Text>
-       </View>
-     </View>
+      <View style={styles.CardDetailsContainer}>
+        <Text style={styles.DetailsTitle}>
+          Seller:{' '}
+          <Text style={styles.DetailsSubTitle}>
+            {order?.item?.Seller?.Name}
+          </Text>
+        </Text>
 
-     <View style={styles.TitleRow}>
-       <View style={styles.DetailsButton}><Text style={styles.DetailsButtonSubTitle}>Details</Text></View>
-       <Text style={styles.statusDelivered}>Delivered</Text>
-       {/* <Text style={styles.statusOrdered}>Ordered</Text> */}
-       {/* <Text style={styles.statusWarning}>CancelledBySeller</Text> */}
-     </View>
+        <View style={styles.TitleRowwithM}>
+          <Text style={styles.DetailsTitle}>
+            Quantity:{' '}
+            <Text style={styles.DetailsSubTitleBold}>
+              {order?.item?.Product?.Count}
+            </Text>
+          </Text>
+          <Text style={styles.DetailsTitle}>
+            Total Amount:{' '}
+            <Text style={styles.DetailsSubTitleBold}>
+              ₹{order?.item?.Charges?.Total}
+            </Text>
+          </Text>
+        </View>
+      </View>
+
+      <View style={styles.TitleRow}>
+        <TouchableOpacity
+          onPress={navigateToOrderDetails}
+          style={styles.DetailsButton}>
+          <Text style={styles.DetailsButtonSubTitle}>Details</Text>
+        </TouchableOpacity>
+        <Text style={styles.statusDelivered}>{order?.item?.status}</Text>
+        {/* <Text style={styles.statusOrdered}>Ordered</Text> */}
+        {/* <Text style={styles.statusWarning}>CancelledBySeller</Text> */}
+      </View>
     </View>
   );
 };
@@ -33,14 +65,14 @@ export default OrderCard;
 
 const styles = StyleSheet.create({
   OrderCard: {
-     width: 343,
-     height: 164,
-     padding: 18,
-     backgroundColor: COLORS.white,
-     alignSelf:'center',
-     marginTop: 24,
-     borderRadius: 8,
-     elevation: 7
+    width: 343,
+    height: 164,
+    padding: 18,
+    backgroundColor: COLORS.white,
+    alignSelf: 'center',
+    marginTop: 24,
+    borderRadius: 8,
+    elevation: 7,
   },
   TitleRow: {
     flexDirection: 'row',
@@ -51,7 +83,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 4
+    marginTop: 4,
   },
   OrderId: {
     color: COLORS.black2,
@@ -60,14 +92,14 @@ const styles = StyleSheet.create({
     height: 16,
     overflow: 'hidden',
   },
-  OrderDate:{
-   color: COLORS.gray5,
-   ...FONTS.h4M
+  OrderDate: {
+    color: COLORS.gray5,
+    ...FONTS.h4M,
   },
   CardDetailsContainer: {
-    marginVertical: 15
+    marginVertical: 15,
   },
-  DetailsTitle:{
+  DetailsTitle: {
     ...FONTS.h4M,
     color: COLORS.gray5,
   },
@@ -80,17 +112,17 @@ const styles = StyleSheet.create({
     color: COLORS.black2,
   },
   DetailsButton: {
-   width: 96,
-   height: 36,
-   borderWidth: 1,
-   borderColor: COLORS.black2,
-   borderRadius: 24,
-   alignItems:'center',
-   justifyContent: 'center'
+    width: 96,
+    height: 36,
+    borderWidth: 1,
+    borderColor: COLORS.black2,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   DetailsButtonSubTitle: {
-   ...FONTS.h4MSB,
-   color: COLORS.black2,
+    ...FONTS.h4MSB,
+    color: COLORS.black2,
   },
   statusDelivered: {
     ...FONTS.h4M,
@@ -103,5 +135,5 @@ const styles = StyleSheet.create({
   statusWarning: {
     ...FONTS.h4M,
     color: COLORS.warning,
-  }
+  },
 });

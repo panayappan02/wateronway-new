@@ -181,7 +181,7 @@ const AddNewAddress = ({route}) => {
         ),
       },
       Street: street,
-      address_id: addressToEditId,
+      address_id: addressToEditId || nanoid(9),
       deleted: false,
     };
 

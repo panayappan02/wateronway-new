@@ -8,6 +8,7 @@ import Profile from './Profile';
 import Checkout from './Checkout';
 import AddressList from './AddressList';
 import PaymentSuccess from './PaymentSuccess';
+import OrderDetails from './OrderDetails';
 
 export {
   Onboarding,
@@ -19,4 +20,5 @@ export {
   Checkout,
   AddressList,
   PaymentSuccess,
+  OrderDetails,
 };

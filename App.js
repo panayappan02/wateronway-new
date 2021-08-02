@@ -13,6 +13,7 @@ import {
   Checkout,
   AddressList,
   PaymentSuccess,
+  OrderDetails,
 } from './screens';
 import Tabs from './navigation/tabs';
 import {useSelector, useDispatch} from 'react-redux';
@@ -161,6 +162,7 @@ const App = () => {
           <Stack.Screen name="AddNewAddress" component={AddNewAddress} />
           <Stack.Screen name="AddressList" component={AddressList} />
           <Stack.Screen name="PaymentSuccess" component={PaymentSuccess} />
+          <Stack.Screen name="OrderDetails" component={OrderDetails} />
         </Stack.Navigator>
       </NavigationContainer>
     </Loading>

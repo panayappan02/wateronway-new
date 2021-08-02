@@ -185,6 +185,7 @@ const Checkout = () => {
           status: 'Ordered',
         })
         .then(() => {
+          console.log('Hu');
           navigation.dispatch(StackActions.replace('PaymentSuccess'));
         })
         .catch(error => {
@@ -315,7 +316,9 @@ const Checkout = () => {
     );
   }
 
-  if (!userId && userDetailsAvailable === false)
+  // TODO: SINCE USERID IS IN REDUX STATE WE USE OR OPERATOR
+
+  if (!userId || userDetailsAvailable === false)
     return <Profile fromOtherComponent={true} />;
 
   if (loading)
