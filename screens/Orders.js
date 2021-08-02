@@ -24,7 +24,7 @@ const Orders = () => {
 
   useEffect(() => {
     getOrdersData();
-  }, [limit]);
+  }, []);
 
   const getOrdersData = () => {
     orderCollection
@@ -33,7 +33,7 @@ const Orders = () => {
       .limit(limit)
       .onSnapshot(snapshot => {
         setOrderList(
-          snapshot.docs.map(doc => ({id: doc.id, item: doc.data()})),
+          snapshot.docs.map(doc => ({id: doc.id, item: doc.data(), doc})),
         );
       });
     setListLoading(false);
@@ -41,7 +41,25 @@ const Orders = () => {
 
   const onEndReached = () => {
     setListLoading(true);
-    setLimit(limit + 4);
+    setTimeout(() => {
+      orderCollection
+        .where('Customer.id', '==', userId)
+        .orderBy('oTime', 'desc')
+        .startAfter(orderList[orderList.length - 1].doc)
+        .limit(limit)
+        .get()
+        .then(snapshot => {
+          if (snapshot.docs.length) {
+            var newOrderListRef = snapshot.docs.map(doc => ({
+              id: doc.id,
+              item: doc.data(),
+              doc,
+            }));
+            setOrderList([...orderList, ...newOrderListRef]);
+          }
+        });
+      setListLoading(false);
+    }, 1000);
   };
 
   function renderOrderList() {
