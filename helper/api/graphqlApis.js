@@ -52,15 +52,6 @@ const updateCustomer = async (id, name, email) => {
   return res;
 };
 const createOrder = async (sellerId, customerId, orderAmount) => {
-  console.log(
-    'SELLER ID ',
-    sellerId,
-    'CUSTOMER ID  ',
-    customerId,
-    'ORDER AMOUNT ',
-    orderAmount,
-  );
-
   const res = await request(
     'https://fx16871b8b.execute-api.us-east-1.amazonaws.com/dev/graphql',
     'post',
@@ -82,5 +73,32 @@ const createOrder = async (sellerId, customerId, orderAmount) => {
 
   return res;
 };
+const customerPayment = async (sellerId, customerId, orderAmount) => {
+  const res = await request(
+    'https://fx16871b8b.execute-api.us-east-1.amazonaws.com/dev/graphql',
+    'post',
+    {
+      query: `
+      mutation{
+        CustomerPayment(
+          customerId: 1
+        ){
+          totalPendingAmount,
+          totalVendors,
+          payments {
+            
+            pendingAmount,
+            seller {
+              name
+            }
+          }
+        }
+      }
+      `,
+    },
+  );
 
-export {createCustomer, updateCustomer, createOrder};
+  return res;
+};
+
+export {createCustomer, updateCustomer, createOrder, customerPayment};

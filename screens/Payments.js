@@ -1,52 +1,104 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View,Image,ScrollView,TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {COLORS, FONTFAMIY, FONTS, SIZES, icons} from '../constants';
-import {Divider } from 'react-native-elements'
+import {Divider} from 'react-native-elements';
 import {Button, Loading, VectorIcon} from '../components';
-import { SafeAreaView } from 'react-native';
-
+import {SafeAreaView} from 'react-native';
+import {customerPayment} from '../helper/api';
 
 const Payments = () => {
+  const [loading, setLoading] = useState(true);
+  const [totalVendors, setTotalVendors] = useState(null);
+  const [totalPendingAmount, setTotalPendingAmount] = useState(null);
+  const [payments, setPayments] = useState([]);
+  useEffect(() => {
+    getPaymentInfo();
+  }, []);
+
+  const getPaymentInfo = async () => {
+    try {
+      const res = await customerPayment();
+      if (res?.status === 'success') {
+        setTotalVendors(res?.response?.data?.CustomerPayment?.totalVendors);
+        setTotalPendingAmount(
+          res?.response?.data?.CustomerPayment?.totalPendingAmount,
+        );
+        setPayments(res?.response?.data?.CustomerPayment?.payments);
+      }
+    } catch (error) {
+      console.log('ERROR IN GETPAYMENTINFO IN PAYMENTS.JS ', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  function renderPaymentList() {
+    return (
+      <View>
+        <FlatList
+          data={payments}
+          keyExtractor={(item, index) => `payment-card-${index}`}
+          renderItem={({item}) => {
+            return (
+              <>
+                <TouchableOpacity>
+                  <View style={styles.TitleRowwithLM}>
+                    <Text style={styles.DetailsTitle}>
+                      <Text style={styles.DetailsSubTitleBold}>
+                        {item?.seller?.name}
+                      </Text>
+                    </Text>
+                    <Text style={styles.amountText}>
+                      ₹<Text>{item?.pendingAmount}</Text>
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+                <Divider />
+              </>
+            );
+          }}
+        />
+      </View>
+    );
+  }
+
   return (
-  <View style={styles.Container}>
-      <Text style={styles.title}>Pending Payments</Text>
+    <Loading loading={loading} color={COLORS.primary}>
+      <View style={styles.Container}>
+        <Text style={styles.title}>Pending Payments</Text>
 
-      <ScrollView style={styles.mainContainer}>
+        <ScrollView style={styles.mainContainer}>
+          <View style={styles.TitleRowwithLM}>
+            <View style={styles.vendorsLeftContainer}>
+              <Image
+                source={icons.sellerGroup}
+                style={{width: 42, height: 42}}
+              />
+              <Text style={styles.vendorsTitle}>{totalVendors}</Text>
+              <Text style={styles.vendorsSubTitle}>Vendors To Pay</Text>
+            </View>
+            <View style={styles.totalPendingContainer}>
+              <Image source={icons.wallet} style={{width: 42, height: 42}} />
+              <Text style={styles.vendorsTitle}>
+                ₹<Text>{totalPendingAmount}</Text>
+              </Text>
+              <Text style={styles.vendorsSubTitle}>Total Pending</Text>
+            </View>
+          </View>
 
-      <View style={styles.TitleRowwithLM}>
-      <View style={styles.vendorsLeftContainer}>
-      <Image source={icons.sellerGroup}  style={{width:42, height:42}}/>
-      <Text style={styles.vendorsTitle}>3</Text>
-      <Text style={styles.vendorsSubTitle}>Vendors To Pay</Text>
-      </View>    
-      <View style={styles.totalPendingContainer}>
-      <Image source={icons.wallet} style={{width:42, height:42}}/>
-      <Text style={styles.vendorsTitle}>₹<Text>13</Text></Text>
-      <Text style={styles.vendorsSubTitle}>Total Pending</Text>
-     </View> 
-       </View>
-
-      
-       <TouchableOpacity>
-      <View style={styles.TitleRowwithLM}>
-       <Text style={styles.DetailsTitle}><Text style={styles.DetailsSubTitleBold}>RSV Waters</Text></Text>
-       <Text style={styles.amountText}>₹<Text>89</Text></Text>     
-       </View>
-       </TouchableOpacity>
-      <Divider/>
-      <TouchableOpacity>
-      <View style={styles.TitleRowwithLM}>
-       <Text style={styles.DetailsTitle}><Text style={styles.DetailsSubTitleBold}>RSV Waters</Text></Text>
-       <Text style={styles.amountText}>₹<Text>100</Text></Text>     
-       </View>
-       </TouchableOpacity>
-      <Divider/>
-     
-
+          {renderPaymentList()}
         </ScrollView>
-      
-    </View>
+      </View>
+    </Loading>
   );
 };
 
@@ -64,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     elevation: 3,
     borderRadius: 13,
-    padding: 20
+    padding: 20,
   },
   totalPendingContainer: {
     width: '48%',
@@ -72,42 +124,42 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     elevation: 3,
     borderRadius: 13,
-    padding: 20
+    padding: 20,
   },
   vendorsTitle: {
     marginTop: 40,
-    ...FONTS.h3M
+    ...FONTS.h3M,
   },
   vendorsSubTitle: {
-   marginTop: 11,
-   color: COLORS.gray5,
-   ...FONTS.h4M
+    marginTop: 11,
+    color: COLORS.gray5,
+    ...FONTS.h4M,
   },
   title: {
     ...FONTS.h1M,
     color: COLORS.black2,
-   // marginVertical: SIZES.base,
-   // marginLeft: 5,
+    // marginVertical: SIZES.base,
+    // marginLeft: 5,
     margin: 14,
-    marginTop: 20
+    marginTop: 20,
   },
   OrderId: {
-    ...FONTS.h3M
+    ...FONTS.h3M,
   },
   OrderDate: {
     color: COLORS.gray5,
-   ...FONTS.h4M
+    ...FONTS.h4M,
   },
   TitleRowwithLM: {
     flexDirection: 'row',
     alignItems: 'center',
-  //  marginTop: 13,
-   // marginBottom: 13,
-     margin: 10,
+    //  marginTop: 13,
+    // marginBottom: 13,
+    margin: 10,
     justifyContent: 'space-between',
-    padding: 10
+    padding: 10,
   },
-  DetailsTitle:{
+  DetailsTitle: {
     ...FONTS.h4M,
     color: COLORS.gray5,
   },
@@ -118,7 +170,7 @@ const styles = StyleSheet.create({
   DetailsSubTitleBold: {
     ...FONTS.h4M,
     color: COLORS.black2,
- //   alignSelf: 'flex-start'
+    //   alignSelf: 'flex-start'
   },
   amountText: {
     ...FONTS.h4M,
@@ -134,37 +186,37 @@ const styles = StyleSheet.create({
   },
   InfoTitle: {
     ...FONTS.h4M,
-    marginVertical: 16
+    marginVertical: 16,
   },
   halfWidth: {
-    width: '50%'
+    width: '50%',
   },
   totalText: {
     ...FONTS.h3M,
-    color: COLORS.black2
+    color: COLORS.black2,
   },
   cancelButton: {
     width: 160,
     height: 36,
     borderWidth: 1,
-   borderColor: COLORS.black2,
-   borderRadius: 24,
-   alignItems:'center',
-   justifyContent: 'center'
+    borderColor: COLORS.black2,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   cancelButtonText: {
     ...FONTS.h4M,
-    color: COLORS.black2
+    color: COLORS.black2,
   },
   helpButton: {
     width: 160,
     height: 36,
     borderWidth: 1,
-   borderColor: COLORS.primary,
-   borderRadius: 24,
-   alignItems:'center',
-   justifyContent: 'center',
-   backgroundColor: COLORS.primary,
-   elevation: 1
+    borderColor: COLORS.primary,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.primary,
+    elevation: 1,
   },
 });
