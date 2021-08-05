@@ -30,6 +30,8 @@ import SpInAppUpdates, {
   IAUUpdateKind,
   StartUpdateOptions,
 } from 'sp-react-native-in-app-updates';
+import axios from 'axios';
+import {createCustomer} from './helper/api';
 
 // Collection
 const usersCollection = firestore().collection('users');
@@ -46,26 +48,34 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [showViewOnboarding, setShowViewOnboarding] = useState(true);
   const [showLocationScreen, setShowLocationScreen] = useState(false);
+
   // const inAppUpdates = new SpInAppUpdates(
   //   false // isDebug
   // );
 
   useEffect(() => {
     SplashScreen.hide();
-    getUserInfo();
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
   }, []);
 
   useEffect(() => {
     checkOnboarding();
   }, []);
 
-  useEffect(async () => {
-    await messaging()
-      .getToken()
-      .then(token => {
-        console.log(token);
-      });
-  }, []);
+  // useEffect(async () => {
+  //   await messaging()
+  //     .getToken()
+  //     .then(token => {
+  //       createCustomer();
+  //     });
+
+  //   const res = await createCustomer();
+
+  //   if (res?.status === 'success') {
+  //     console.log(res?.response);
+  //   }
+  // }, [user]);
 
   useEffect(() => {
     try {
@@ -106,25 +116,102 @@ const App = () => {
     }
   };
 
-  const getUserInfo = async () => {
-    auth().onAuthStateChanged(user => {
+  // const getUserInfo = async () => {
+  //   auth().onAuthStateChanged(async user => {
+  //     if (user) {
+  //       userHelper.getUserId().then(userIdResponse => {
+  //         if (userIdResponse !== null) {
+  //           dispatch(setUserId(userIdResponse));
+  //         }
+  //       });
+  //       dispatch(
+  //         setUser({
+  //           uid: user.uid,
+  //           phoneNumber: user.phoneNumber,
+  //         }),
+  //       );
+  //       // TOKEN GENERATION AND USER ID
+  //       await messaging()
+  //         .getToken()
+  //         .then(token => {
+  //           createCustomer(user?.phoneNumber, token).then(async res => {
+  //             if (res?.status === 'success') {
+  // console.log(
+  //   'CREATE CUSTOMER ',
+  //   res?.response?.data?.CreateCustomer,
+  // );
+
+  // if (res?.response?.data?.CreateCustomer?.name === null) {
+  //                 console.log(res?.response?.data?.CreateCustomer?.id);
+  //                 usersCollection
+  //                   .doc(res?.response?.data?.CreateCustomer?.id.toString())
+  //                   .set({})
+  //                   .then(() => console.log('USER ADDED'))
+  //                   .catch(err => console.log('USER ADDING ERROR ', err));
+  //                 // await usersCollection
+  //                 //   .doc(res?.response?.data?.CreateCustomer?.id)
+  //                 //   .set({
+  //                 //     phoneNumber: user?.phoneNumber,
+  //                 //   });
+  //               }
+  //             }
+  //           });
+  //         });
+
+  //       // });
+  //     } else {
+  //       dispatch(setUser(null));
+  //     }
+  //   });
+  // };
+
+  const onAuthStateChanged = async user => {
+    try {
       if (user) {
-        userHelper.getUserId().then(userIdResponse => {
-          if (userIdResponse !== null) {
-            dispatch(setUserId(userIdResponse));
-          }
-        });
         dispatch(
           setUser({
             uid: user.uid,
             phoneNumber: user.phoneNumber,
           }),
         );
-        // });
+        const userIdResponse = await userHelper.getUserId();
+        if (userIdResponse !== null) {
+          dispatch(setUserId(userIdResponse));
+        } else {
+          const token = await messaging().getToken();
+          const res = await createCustomer(user.phoneNumber, token);
+          if (res?.status === 'success') {
+            console.log(
+              'CREATE CUSTOMER ',
+              res?.response?.data?.CreateCustomer,
+            );
+
+            if (res?.response?.data?.CreateCustomer?.name === null) {
+              dispatch(
+                setUserId(res?.response?.data?.CreateCustomer?.id.toString()),
+              );
+              await userHelper.saveUserId(
+                res?.response?.data?.CreateCustomer?.id.toString(),
+              );
+
+              // CREATING AN USER DOCUMENT WITH INCOMING ID
+              usersCollection
+                .doc(res?.response?.data?.CreateCustomer?.id.toString())
+                .set({})
+                .then(() =>
+                  console.log(
+                    'USER DOCUMENT CREATED IN ONAUTHSTATECHANGED APP JS',
+                  ),
+                );
+            }
+          }
+        }
       } else {
         dispatch(setUser(null));
       }
-    });
+    } catch (error) {
+      console.log('ERROR IN GETUSERINFO APP.JS ', error);
+    }
   };
 
   const getUserIdFromDb = async user => {

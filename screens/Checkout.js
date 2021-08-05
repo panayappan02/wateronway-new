@@ -30,6 +30,7 @@ import firestore from '@react-native-firebase/firestore';
 import {calculateDistance, locationHelper} from '../utils';
 import _ from 'lodash';
 import {setSelectedProduct} from '../redux/productSlice';
+import {createOrder} from '../helper/api';
 
 // Collection
 const userCollection = firestore().collection('users');
@@ -37,6 +38,7 @@ const orderCollection = firestore().collection('orders');
 
 const Checkout = () => {
   const navigation = useNavigation();
+  const user = useSelector(state => state.user.user);
   const userId = useSelector(state => state.user.userId);
   const userDetails = useSelector(state => state.user.userDetails);
   const selectedSeller = useSelector(state => state.product.selectedSeller);
@@ -59,7 +61,7 @@ const Checkout = () => {
 
       userCollection.doc(userId).onSnapshot(snapshot => {
         if (snapshot.data()?.addresses === undefined) {
-          if (userId && snapshot.data()) {
+          if (user && userId && !_.isEmpty(snapshot.data())) {
             setUserDetailsAvailable(true);
             navigation.dispatch(
               StackActions.replace('LocationSelection', {
@@ -114,7 +116,7 @@ const Checkout = () => {
     }
   };
 
-  const onPlaceOrderByCashOnDelivery = () => {
+  const onPlaceOrderByCashOnDelivery = async () => {
     if (btnLoading) return;
     setBtnLoading(true);
 
@@ -125,6 +127,17 @@ const Checkout = () => {
       var ISTTime = new Date(
         currentTime.getTime() + (ISTOffset + currentOffset) * 60000,
       );
+
+      // ORDER CREATION IN GRAPHQL API
+      const res = await createOrder(
+        1,
+        userId,
+        selectedProduct?.price * selectedProduct?.qty +
+          deliveryCharge +
+          selectedProduct?.tax,
+      );
+
+      console.log('CREATE ORDER RESPONSE ', res);
 
       orderCollection
         .add({

@@ -177,11 +177,13 @@ import {Loading, ProfileInfo, UserDetailForm} from '..';
 import {COLORS} from '../../constants';
 import {nanoid} from 'nanoid';
 import {userHelper} from '../../utils';
+import {updateCustomer} from '../../helper/api';
 const userCollection = firestore().collection('users');
 
 const Authenticated = ({fromOtherComponent}) => {
   const dispatch = useDispatch();
   const user = useSelector(state => state.user.user);
+  const userId = useSelector(state => state.user.userId);
   const [isUserDetailsAvailable, setIsUserDetailsAvailable] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -217,18 +219,32 @@ const Authenticated = ({fromOtherComponent}) => {
 
   const saveUserDetails = async (name, email) => {
     try {
-      let userId = nanoid(5);
-      const users = await userCollection.get();
-      const usersIdsList = users.docs.map(doc => doc.id);
-      if (usersIdsList.includes(userId)) {
-        saveUserDetails(name, email);
-      } else {
-        setLoading(true);
+      // let userId = nanoid(5);
+      // const users = await userCollection.get();
+      // const usersIdsList = users.docs.map(doc => doc.id);
+      // if (usersIdsList.includes(userId)) {
+      //   saveUserDetails(name, email);
+      // } else {
+      //   setLoading(true);
+      //   await userCollection.doc(userId).set({
+      //     name,
+      //     email,
+      //     phoneNumber: user.phoneNumber,
+      //   });
+      // }
+
+      const res = await updateCustomer(userId, name, email);
+
+      if (res?.status === 'success') {
         await userCollection.doc(userId).set({
           name,
           email,
           phoneNumber: user.phoneNumber,
         });
+      } else {
+        setLoading(false);
+        alert('Something went Wrong!');
+        console.log('ERROR IN UPDATING CUSTOMER IN API ', res?.error);
       }
     } catch (error) {
       console.log('ERROR SAVEUSERDETAILS IN AUTHENTICATED JS ', error);
