@@ -36,7 +36,7 @@ const Profile = ({fromOtherComponent}) => {
     try {
       await confirm.confirm(code);
       // TODO:
-      setLoading(true);
+      // setLoading(true);
       setConfirm(null);
     } catch (error) {
       alert('Invalid code');
