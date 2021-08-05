@@ -9,6 +9,8 @@ const getHelp = require('../assets/icons/getHelp.png');
 const cod = require('../assets/icons/cash-on-delivery.png');
 const ChevronLeft = require('../assets/icons/chevron-left.png');
 const notDeliverable = require('../assets/icons/no-home.png');
+const wallet = require('../assets/icons/wallet.png');
+const sellerGroup = require('../assets/icons/sellerGroup.png');
 
 export default {
   home,
@@ -22,4 +24,6 @@ export default {
   cod,
   ChevronLeft,
   notDeliverable,
+  wallet,
+  sellerGroup
 };

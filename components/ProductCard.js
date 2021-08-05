@@ -112,14 +112,14 @@ const ProductCard = ({product}) => {
         height={360}
         openDuration={500}
         closeOnDragDown={true}
-        closeOnPressMask={false}
+        closeOnPressMask={true}
         customStyles={{
           container: {
             padding: 14,
             alignItems: 'center',
             backgroundColor: COLORS.BGColor,
-            borderTopEndRadius: 40,
-            borderTopStartRadius: 40,
+            borderTopEndRadius: 20,
+            borderTopStartRadius: 20,
           },
           draggableIcon: {
             width: 60,
@@ -219,7 +219,7 @@ const ProductCard = ({product}) => {
           <View style={styles.moreDiscountContainer}>
             <Text style={styles.needMoreText}>
               Need More? <Text style={styles.contactUsText}>CONTACT US</Text>{' '}
-              for volumetric discounts.
+              for volumetric discounts that suits your needs!
             </Text>
           </View>
 

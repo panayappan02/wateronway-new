@@ -19,28 +19,34 @@ const Tabs = () => {
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-    refRBSheet.current.open();
+      console.log('Message handled in the Active State!', remoteMessage);
+      if(remoteMessage.data?.type == 'OrderDelivered'){
+      refRBSheet.current.open();
+      }
     });
     return unsubscribe;
   }, []);
   
 
    useEffect(() => {
+
+
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled in the background!', remoteMessage);
+      if(remoteMessage.data?.type == 'OrderDelivered'){
       refRBSheet.current.open();
+      }
     });
-
-    // AppRegistry.registerHeadlessTask('RNFirebaseBackgroundMessage', () => bgMessaging);
-
     
     messaging().onNotificationOpenedApp(remoteMessage => {
       console.log(
         'Notification caused app to open from background state:',
-        remoteMessage.notification,
+        remoteMessage,
       );
+      if(remoteMessage.data?.type == 'OrderDelivered'){
       refRBSheet.current.open();
       navigation.navigate(remoteMessage.data.type);
+      }
     });
 
     messaging()
@@ -49,10 +55,12 @@ const Tabs = () => {
         if (remoteMessage) {
           console.log(
             'Notification caused app to open from quit state:',
-            remoteMessage.notification,
+            remoteMessage,
           );
+          if(remoteMessage.data?.type == 'OrderDelivered'){
           refRBSheet.current.open();
           navigation.navigate(remoteMessage.data.type);
+          }
         }
       });
 
@@ -124,7 +132,8 @@ const Tabs = () => {
               padding: 14,
               alignItems: "center",
               backgroundColor: COLORS.BGColor,
-              borderRadius: 40
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
             },
             draggableIcon: {
               width: 60,

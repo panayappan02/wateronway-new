@@ -354,7 +354,7 @@ const Checkout = () => {
         <Button
           onPress={onSubmit}
           loading={btnLoading}
-          label="Submit Order"
+          label="Confirm Order"
           disabled={!isDeliverable}
           containerStyle={styles.submitBtn}
         />
