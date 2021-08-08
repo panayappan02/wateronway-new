@@ -17,10 +17,12 @@ import {customerPayment} from '../helper/api';
 
 const Payments = () => {
   const [loading, setLoading] = useState(true);
+  const userId = useSelector(state => state.user.userId);
   const [totalVendors, setTotalVendors] = useState(null);
   const [totalPendingAmount, setTotalPendingAmount] = useState(null);
   const [payments, setPayments] = useState([]);
   useEffect(() => {
+    
     getPaymentInfo();
   }, []);
 
@@ -75,7 +77,7 @@ const Payments = () => {
     <Loading loading={loading} color={COLORS.primary}>
       <View style={styles.Container}>
         <Text style={styles.title}>Pending Payments</Text>
-
+{userId != null?
         <ScrollView style={styles.mainContainer}>
           <View style={styles.TitleRowwithLM}>
             <View style={styles.vendorsLeftContainer}>
@@ -97,6 +99,8 @@ const Payments = () => {
 
           {renderPaymentList()}
         </ScrollView>
+:  <Text style={styles.loginText}>Please Login to see your payments!</Text>}
+
       </View>
     </Loading>
   );
@@ -142,6 +146,11 @@ const styles = StyleSheet.create({
     // marginLeft: 5,
     margin: 14,
     marginTop: 20,
+  },
+  loginText: {
+    color: COLORS.gray5,
+    ...FONTS.h4M,
+    marginLeft: 20
   },
   OrderId: {
     ...FONTS.h3M,

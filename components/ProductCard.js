@@ -110,7 +110,7 @@ const ProductCard = ({product}) => {
       <RBSheet
         ref={refRBSheet}
         height={360}
-        openDuration={500}
+        openDuration={300}
         closeOnDragDown={true}
         closeOnPressMask={true}
         customStyles={{
@@ -118,8 +118,9 @@ const ProductCard = ({product}) => {
             padding: 14,
             alignItems: 'center',
             backgroundColor: COLORS.BGColor,
-            borderTopEndRadius: 20,
-            borderTopStartRadius: 20,
+            borderRadius:0,
+            borderTopEndRadius: 15,
+            borderTopStartRadius: 15,
           },
           draggableIcon: {
             width: 60,

@@ -27,8 +27,10 @@ const Orders = () => {
   }, []);
 
   const getOrdersData = () => {
+    console.log(userId);
+    if(userId != null){
     orderCollection
-      .where('Customer.id', '==', userId)
+      .where('Customer.id', '==', userId.toString())
       .orderBy('oTime', 'desc')
       .limit(limit)
       .onSnapshot(snapshot => {
@@ -36,6 +38,7 @@ const Orders = () => {
           snapshot.docs.map(doc => ({id: doc.id, item: doc.data(), doc})),
         );
       });
+    }
     setListLoading(false);
   };
 
@@ -93,7 +96,9 @@ const Orders = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>My Orders</Text>
-      {renderOrderList()}
+     {userId != null? renderOrderList() : 
+     <Text style={styles.loginText}>Please Login to see your orders!</Text>
+     }
     </SafeAreaView>
   );
 };
@@ -117,4 +122,8 @@ const styles = StyleSheet.create({
   orderListContainer: {
     height: '90%',
   },
+  loginText: {
+    color: COLORS.gray5,
+    ...FONTS.h4M,
+  }
 });

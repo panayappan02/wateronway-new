@@ -7,7 +7,7 @@
     <item
         android:width="220dp" 
         android:height="230dp" 
-        android:drawable="@mipmap/splash_icon"
+        android:drawable="@mipmap/screen"
         android:gravity="center" />
 
 </layer-list>

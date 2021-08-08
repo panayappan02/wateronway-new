@@ -1,14 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, Image, ScrollView} from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import {StyleSheet, Text, View, Image, ScrollView, TouchableOpacity} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {COLORS, FONTFAMIY, FONTS, SIZES, icons} from '../constants';
 import {Divider} from 'react-native-elements';
 import {NavigationBar} from '../components';
 import {convertToddmmyy} from '../utils';
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const OrderDetails = ({route}) => {
   const userId = useSelector(state => state.user.userId);
   const order = route?.params?.order;
+  const refRBSheet = useRef();
 
   const {
     id: orderId,
@@ -156,9 +158,11 @@ const OrderDetails = ({route}) => {
 
         <View style={styles.TitleRowwithLM}>
           <View style={styles.halfWidth}>
+            <TouchableOpacity onPress={()=>refRBSheet.current.open()}>
             <View style={styles.cancelButton}>
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </View>
+            </TouchableOpacity>
           </View>
           <View style={styles.halfWidth}>
             <View
@@ -169,6 +173,51 @@ const OrderDetails = ({route}) => {
           </View>
         </View>
       </ScrollView>
+
+      <RBSheet
+          ref={refRBSheet}
+          height={170}
+          openDuration={200}closeOnDragDown={true}
+        closeOnPressMask={true}
+          customStyles={{
+            container: {
+              padding: 14,
+              alignItems: "center",
+              backgroundColor: COLORS.BGColor,
+              borderTopLeftRadius: 10,
+              borderTopRightRadius: 10,
+            },
+            draggableIcon: {
+              width: 60,
+              height: 6,
+              backgroundColor: COLORS.gray5
+            }
+          }}
+        >
+          <View style={styles.modalContainer}>
+          <Text style={styles.CancelOrderTitle}>Are you sure you want to cancel this order?</Text>
+
+          <View style={styles.TitleRowwithLM}>
+          <View style={styles.halfWidth}>
+            <TouchableOpacity onPress={()=>refRBSheet.current.close()}>
+            <View
+              style={styles.NoButton}
+              onPress={() => {}}>
+              <Text style={styles.NoButtonText}>No</Text>
+            </View>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.halfWidth}>
+          <View style={styles.YesButton}>
+              <Text style={styles.YesButtonText}>Yes</Text>
+            </View>
+           
+          </View>
+        </View>
+
+          </View>
+        </RBSheet>
+
     </View>
   );
 };
@@ -267,6 +316,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'center',
   },
   cancelButtonText: {
     ...FONTS.h4M,
@@ -282,8 +332,49 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: COLORS.primary,
     elevation: 1,
+    alignSelf: 'center',
   },
   helpButtonText: {
+    ...FONTS.h4M,
+    color: COLORS.white,
+  },
+  modalContainer: {
+    padding: 20
+  },
+  CancelOrderTitle: {
+    ...FONTS.h4M,
+    color: COLORS.black2,
+    textAlign: 'center',
+  },
+  YesButton: {
+    width: 130,
+    height: 36,
+    borderWidth: 1,
+    borderColor: COLORS.black2,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginTop: 10
+  },
+  YesButtonText: {
+    ...FONTS.h4M,
+    color: COLORS.black2,
+  },
+  NoButton: {
+    width: 130,
+    height: 36,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.primary,
+    elevation: 1,
+    alignSelf: 'center',
+    marginTop: 10
+  },
+  NoButtonText: {
     ...FONTS.h4M,
     color: COLORS.white,
   },

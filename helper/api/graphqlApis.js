@@ -2,7 +2,7 @@ import {request} from '../../utils';
 
 const createCustomer = async (mobile, fcmToken) => {
   const res = await request(
-    'https://fx16871b8b.execute-api.us-east-1.amazonaws.com/dev/graphql',
+    'https://0b4n57itb1.execute-api.us-east-1.amazonaws.com/dev/graphql',
     'post',
     {
       query: `
@@ -27,7 +27,7 @@ const updateCustomer = async (id, name, email) => {
   console.log('USER ID ', id, 'NAME ', name, 'EMAIL ', email);
 
   const res = await request(
-    'https://fx16871b8b.execute-api.us-east-1.amazonaws.com/dev/graphql',
+    'https://0b4n57itb1.execute-api.us-east-1.amazonaws.com/dev/graphql',
     'post',
     {
       query: `
@@ -53,7 +53,7 @@ const updateCustomer = async (id, name, email) => {
 };
 const createOrder = async (sellerId, customerId, orderAmount) => {
   const res = await request(
-    'https://fx16871b8b.execute-api.us-east-1.amazonaws.com/dev/graphql',
+    'https://0b4n57itb1.execute-api.us-east-1.amazonaws.com/dev/graphql',
     'post',
     {
       query: `
@@ -75,13 +75,13 @@ const createOrder = async (sellerId, customerId, orderAmount) => {
 };
 const customerPayment = async (sellerId, customerId, orderAmount) => {
   const res = await request(
-    'https://fx16871b8b.execute-api.us-east-1.amazonaws.com/dev/graphql',
+    'https://0b4n57itb1.execute-api.us-east-1.amazonaws.com/dev/graphql',
     'post',
     {
       query: `
       mutation{
         CustomerPayment(
-          customerId: 1
+          customerId: 10
         ){
           totalPendingAmount,
           totalVendors,
@@ -97,7 +97,7 @@ const customerPayment = async (sellerId, customerId, orderAmount) => {
       `,
     },
   );
-
+   console.log(res);
   return res;
 };
 
