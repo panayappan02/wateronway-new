@@ -6,7 +6,7 @@ import {COLORS, constants, FONTFAMIY} from '../constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import {StackActions} from '@react-navigation/native';
+import {StackActions, CommonActions} from '@react-navigation/native';
 
 const LocationSelection = ({route}) => {
   const navigation = useNavigation();
@@ -68,7 +68,13 @@ const LocationSelection = ({route}) => {
           JSON.stringify(selectedLocation),
         );
 
-        navigation.dispatch(StackActions.replace('Tabs'));
+        // navigation.dispatch(StackActions.replace('Tabs'));
+        navigation.dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{name: 'Tabs'}],
+          }),
+        );
       } catch (error) {
         console.log('ERROR ONSUBMIT IN LOCATIONSELECTION ', error);
       }

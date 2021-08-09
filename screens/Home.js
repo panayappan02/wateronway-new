@@ -11,18 +11,20 @@ import {
 import {Carousel, Loading, ProductCard, VectorIcon} from '../components';
 import {SIZES, icons, FONTS, FONTFAMIY, COLORS} from '../constants';
 import {locationHelper, calculateDistance} from '../utils';
-import firestore from '@react-native-firebase/firestore';
 import {GeoFirestore} from 'geofirestore';
 import _ from 'lodash';
 import {useSelector, useDispatch} from 'react-redux';
 import {setSellerList} from '../redux/productSlice';
 import {setUserDetails} from '../redux/userSlice';
+import {useNavigation} from '@react-navigation/native';
 
 // COLLECTION
+import firestore from '@react-native-firebase/firestore';
 const usersCollection = firestore().collection('users');
 
 const Home = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const userId = useSelector(state => state.user.userId);
   const [loading, setLoading] = useState(true);
   const [location, setLocation] = useState(null);
@@ -150,9 +152,18 @@ const Home = () => {
     }
   };
 
+  const navigateToLocationSelection = () => {
+    navigation.navigate('LocationSelection', {
+      lat: location?.latitude,
+      lng: location?.longitude,
+    });
+  };
+
   function renderAddressBar() {
     return (
-      <TouchableOpacity style={styles.cardShadow}>
+      <TouchableOpacity
+        onPress={navigateToLocationSelection}
+        style={styles.cardShadow}>
         <View style={[styles.cardContainer, styles.addressContainer]}>
           <VectorIcon.Ionicons name="ios-location-outline" size={30} />
           <Text style={styles.addressText} numberOfLines={1}>

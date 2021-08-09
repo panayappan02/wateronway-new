@@ -1,16 +1,31 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {StyleSheet, Text, View, Image, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {COLORS, FONTFAMIY, FONTS, SIZES, icons} from '../constants';
 import {Divider} from 'react-native-elements';
-import {NavigationBar} from '../components';
+import {Loading, NavigationBar} from '../components';
 import {convertToddmmyy} from '../utils';
-import RBSheet from "react-native-raw-bottom-sheet";
+import RBSheet from 'react-native-raw-bottom-sheet';
+import {cancelOrder} from '../helper/api';
+import {useNavigation} from '@react-navigation/native';
+
+// COLLECTION
+import firestore from '@react-native-firebase/firestore';
+const orderCollection = firestore().collection('orders');
 
 const OrderDetails = ({route}) => {
+  const navigation = useNavigation();
   const userId = useSelector(state => state.user.userId);
   const order = route?.params?.order;
   const refRBSheet = useRef();
+  const [cancelOrderLoading, setCancelOrderLoading] = useState(false);
 
   const {
     id: orderId,
@@ -28,7 +43,22 @@ const OrderDetails = ({route}) => {
   } = route?.params?.order;
   const date = convertToddmmyy(oTime);
 
-  console.log('ORDER DETAILS ', order?.item);
+  const oncancelOrder = async () => {
+    if (cancelOrderLoading) return;
+    setCancelOrderLoading(true);
+
+    const res = await cancelOrder(orderId);
+
+    if (res?.status === 'success') {
+      orderCollection.doc(orderId.toString()).update({
+        status: 'CancelledByCustomer',
+      });
+    }
+
+    setCancelOrderLoading(false);
+    refRBSheet.current.close();
+    navigation.goBack();
+  };
 
   return (
     <View style={styles.Container}>
@@ -158,10 +188,10 @@ const OrderDetails = ({route}) => {
 
         <View style={styles.TitleRowwithLM}>
           <View style={styles.halfWidth}>
-            <TouchableOpacity onPress={()=>refRBSheet.current.open()}>
-            <View style={styles.cancelButton}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </View>
+            <TouchableOpacity onPress={() => refRBSheet.current.open()}>
+              <View style={styles.cancelButton}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </View>
             </TouchableOpacity>
           </View>
           <View style={styles.halfWidth}>
@@ -175,49 +205,53 @@ const OrderDetails = ({route}) => {
       </ScrollView>
 
       <RBSheet
-          ref={refRBSheet}
-          height={170}
-          openDuration={200}closeOnDragDown={true}
+        ref={refRBSheet}
+        height={170}
+        openDuration={200}
+        closeOnDragDown={true}
         closeOnPressMask={true}
-          customStyles={{
-            container: {
-              padding: 14,
-              alignItems: "center",
-              backgroundColor: COLORS.BGColor,
-              borderTopLeftRadius: 10,
-              borderTopRightRadius: 10,
-            },
-            draggableIcon: {
-              width: 60,
-              height: 6,
-              backgroundColor: COLORS.gray5
-            }
-          }}
-        >
-          <View style={styles.modalContainer}>
-          <Text style={styles.CancelOrderTitle}>Are you sure you want to cancel this order?</Text>
+        customStyles={{
+          container: {
+            padding: 14,
+            alignItems: 'center',
+            backgroundColor: COLORS.BGColor,
+            borderTopLeftRadius: 10,
+            borderTopRightRadius: 10,
+          },
+          draggableIcon: {
+            width: 60,
+            height: 6,
+            backgroundColor: COLORS.gray5,
+          },
+        }}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.CancelOrderTitle}>
+            Are you sure you want to cancel this order?
+          </Text>
 
           <View style={styles.TitleRowwithLM}>
-          <View style={styles.halfWidth}>
-            <TouchableOpacity onPress={()=>refRBSheet.current.close()}>
-            <View
-              style={styles.NoButton}
-              onPress={() => {}}>
-              <Text style={styles.NoButtonText}>No</Text>
+            <View style={styles.halfWidth}>
+              <TouchableOpacity onPress={() => refRBSheet.current.close()}>
+                <View style={styles.NoButton} onPress={() => {}}>
+                  <Text style={styles.NoButtonText}>No</Text>
+                </View>
+              </TouchableOpacity>
             </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.halfWidth}>
-          <View style={styles.YesButton}>
-              <Text style={styles.YesButtonText}>Yes</Text>
+            <View style={styles.halfWidth}>
+              <TouchableOpacity
+                onPress={oncancelOrder}
+                style={styles.YesButton}>
+                <Loading
+                  loading={cancelOrderLoading}
+                  color={COLORS.primary}
+                  type={'ThreeBounce'}>
+                  <Text style={styles.YesButtonText}>Yes</Text>
+                </Loading>
+              </TouchableOpacity>
             </View>
-           
           </View>
         </View>
-
-          </View>
-        </RBSheet>
-
+      </RBSheet>
     </View>
   );
 };
@@ -339,7 +373,7 @@ const styles = StyleSheet.create({
     color: COLORS.white,
   },
   modalContainer: {
-    padding: 20
+    padding: 20,
   },
   CancelOrderTitle: {
     ...FONTS.h4M,
@@ -355,7 +389,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    marginTop: 10
+    marginTop: 10,
   },
   YesButtonText: {
     ...FONTS.h4M,
@@ -372,7 +406,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     elevation: 1,
     alignSelf: 'center',
-    marginTop: 10
+    marginTop: 10,
   },
   NoButtonText: {
     ...FONTS.h4M,

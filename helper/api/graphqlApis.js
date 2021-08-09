@@ -59,9 +59,9 @@ const createOrder = async (sellerId, customerId, orderAmount) => {
       query: `
       mutation{
         CreateOrder(
-          sellerId: ${sellerId},
-          customerId: ${customerId},
-          orderAmount: ${orderAmount},
+          sellerId: ${Number(sellerId)},
+          customerId: ${Number(customerId)},
+          orderAmount: ${Number(customerId)},
          
         ){
           id
@@ -97,8 +97,34 @@ const customerPayment = async (sellerId, customerId, orderAmount) => {
       `,
     },
   );
-   console.log(res);
+  console.log(res);
+  return res;
+};
+const cancelOrder = async orderId => {
+  const res = await request(
+    'https://0b4n57itb1.execute-api.us-east-1.amazonaws.com/dev/graphql',
+    'post',
+    {
+      query: `
+      mutation{
+        CancelOrder(
+          orderId: ${Number(orderId)},
+          CancelType: "CancelledByCustomer"
+        ){
+          id, status
+        }
+      }
+      `,
+    },
+  );
+  console.log(res);
   return res;
 };
 
-export {createCustomer, updateCustomer, createOrder, customerPayment};
+export {
+  createCustomer,
+  updateCustomer,
+  createOrder,
+  customerPayment,
+  cancelOrder,
+};

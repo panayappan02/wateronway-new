@@ -130,7 +130,7 @@ const Checkout = () => {
 
       // ORDER CREATION IN GRAPHQL API
       const res = await createOrder(
-        1,
+        selectedSeller?.sellerId,
         userId,
         selectedProduct?.price * selectedProduct?.qty +
           deliveryCharge +
@@ -139,72 +139,77 @@ const Checkout = () => {
 
       console.log('CREATE ORDER RESPONSE ', res);
 
-      orderCollection
-        .add({
-          Charges: {
-            CartPrice: selectedProduct?.mrp * selectedProduct?.qty,
-            DC: deliveryCharge,
-            Discount:
-              (selectedProduct?.mrp - selectedProduct?.price) *
-              selectedProduct?.qty,
-            Tax: selectedProduct?.tax,
-            Total:
-              selectedProduct?.price * selectedProduct?.qty +
-              deliveryCharge +
-              selectedProduct?.tax,
-          },
-          Customer: {
-            Tel: userDetails?.phoneNumber,
-            address: {
-              AddressType: defaultAddress?.AddressType,
-              Dno: defaultAddress?.Dno,
-              Landmark: defaultAddress?.Landmark,
-              Map: {
-                // TODO: ADDRESSLINE
-                // AddressLine: defaultAddress?.Map?.AddressLine,
-                Coordinates: new firestore.GeoPoint(
-                  defaultAddress?.Map?.Coordinates?._latitude,
-                  defaultAddress?.Map?.Coordinates?._longitude,
-                ),
-              },
-              Street: defaultAddress?.Street,
-              address_id: defaultAddress?.address_id,
-              deleted: defaultAddress?.deleted,
-              floor: defaultAddress?.floor,
-              fullName: defaultAddress?.fullName,
-              isLiftAvailable: defaultAddress?.isLiftAvailable,
-              mobileNumber: defaultAddress?.mobileNumber,
+      if (res?.status === 'success') {
+        orderCollection
+          .doc(res?.response?.data?.CreateOrder?.id.toString())
+          .set({
+            Charges: {
+              CartPrice: selectedProduct?.mrp * selectedProduct?.qty,
+              DC: deliveryCharge,
+              Discount:
+                (selectedProduct?.mrp - selectedProduct?.price) *
+                selectedProduct?.qty,
+              Tax: selectedProduct?.tax,
+              Total:
+                selectedProduct?.price * selectedProduct?.qty +
+                deliveryCharge +
+                selectedProduct?.tax,
             },
-            email: userDetails?.email,
-            id: userId,
-            name: userDetails?.name,
-          },
-          Product: {
-            Count: selectedProduct?.qty,
-            Name: selectedProduct?.product_name,
-            id: selectedProduct?.product_id,
-          },
-          Seller: {
-            Name: selectedSeller?.sellerName,
-            Tel: selectedSeller?.sellerMobile,
-            id: selectedSeller?.sellerId,
-          },
-          oTime: ISTTime,
-          payment: {
-            amountPaid: 0,
-            paymentMode: 'cash on delivery',
-          },
-          sTime: currentTime,
-          status: 'Ordered',
-        })
-        .then(() => {
-          console.log('Hu');
-          navigation.dispatch(StackActions.replace('PaymentSuccess'));
-        })
-        .catch(error => {
-          setBtnLoading(false);
-          console.log('ERROR IN CREATING ORDER ', error);
-        });
+            Customer: {
+              Tel: userDetails?.phoneNumber,
+              address: {
+                AddressType: defaultAddress?.AddressType,
+                Dno: defaultAddress?.Dno,
+                Landmark: defaultAddress?.Landmark,
+                Map: {
+                  // TODO: ADDRESSLINE
+                  // AddressLine: defaultAddress?.Map?.AddressLine,
+                  Coordinates: new firestore.GeoPoint(
+                    defaultAddress?.Map?.Coordinates?._latitude,
+                    defaultAddress?.Map?.Coordinates?._longitude,
+                  ),
+                },
+                Street: defaultAddress?.Street,
+                address_id: defaultAddress?.address_id,
+                deleted: defaultAddress?.deleted,
+                floor: defaultAddress?.floor,
+                fullName: defaultAddress?.fullName,
+                isLiftAvailable: defaultAddress?.isLiftAvailable,
+                mobileNumber: defaultAddress?.mobileNumber,
+              },
+              email: userDetails?.email,
+              id: userId,
+              name: userDetails?.name,
+            },
+            Product: {
+              Count: selectedProduct?.qty,
+              Name: selectedProduct?.product_name,
+              id: selectedProduct?.product_id,
+            },
+            Seller: {
+              Name: selectedSeller?.sellerName,
+              Tel: selectedSeller?.sellerMobile,
+              id: selectedSeller?.sellerId,
+            },
+            oTime: ISTTime,
+            payment: {
+              amountPaid: 0,
+              paymentMode: 'cash on delivery',
+            },
+            sTime: currentTime,
+            status: 'Ordered',
+          })
+
+          .then(() => {
+            navigation.dispatch(StackActions.replace('PaymentSuccess'));
+          })
+          .catch(error => {
+            setBtnLoading(false);
+            console.log('ERROR IN CREATING ORDER ', error);
+          });
+      } else {
+        alert('Something Went Wrong');
+      }
     } catch (error) {
       console.log(
         'ERROR IN ONPLACEORDERBYCASHONDELIVERY IN CHECKOUT JS ',
