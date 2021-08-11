@@ -22,7 +22,6 @@ const Payments = () => {
   const [totalPendingAmount, setTotalPendingAmount] = useState(null);
   const [payments, setPayments] = useState([]);
   useEffect(() => {
-    
     getPaymentInfo();
   }, []);
 
@@ -77,30 +76,33 @@ const Payments = () => {
     <Loading loading={loading} color={COLORS.primary}>
       <View style={styles.Container}>
         <Text style={styles.title}>Pending Payments</Text>
-{userId != null?
-        <ScrollView style={styles.mainContainer}>
-          <View style={styles.TitleRowwithLM}>
-            <View style={styles.vendorsLeftContainer}>
-              <Image
-                source={icons.sellerGroup}
-                style={{width: 42, height: 42}}
-              />
-              <Text style={styles.vendorsTitle}>{totalVendors}</Text>
-              <Text style={styles.vendorsSubTitle}>Vendors To Pay</Text>
+        {userId != null ? (
+          <ScrollView style={styles.mainContainer}>
+            <View style={styles.TitleRowwithLM}>
+              <View style={styles.vendorsLeftContainer}>
+                <Image
+                  source={icons.sellerGroup}
+                  style={{width: 42, height: 42}}
+                />
+                <Text style={styles.vendorsTitle}>{totalVendors}</Text>
+                <Text style={styles.vendorsSubTitle}>Vendors To Pay</Text>
+              </View>
+              <View style={styles.totalPendingContainer}>
+                <Image source={icons.wallet} style={{width: 42, height: 42}} />
+                <Text style={styles.vendorsTitle}>
+                  ₹<Text>{totalPendingAmount}</Text>
+                </Text>
+                <Text style={styles.vendorsSubTitle}>Total Pending</Text>
+              </View>
             </View>
-            <View style={styles.totalPendingContainer}>
-              <Image source={icons.wallet} style={{width: 42, height: 42}} />
-              <Text style={styles.vendorsTitle}>
-                ₹<Text>{totalPendingAmount}</Text>
-              </Text>
-              <Text style={styles.vendorsSubTitle}>Total Pending</Text>
-            </View>
-          </View>
 
-          {renderPaymentList()}
-        </ScrollView>
-:  <Text style={styles.loginText}>Please Login to see your payments!</Text>}
-
+            {renderPaymentList()}
+          </ScrollView>
+        ) : (
+          <Text style={styles.loginText}>
+            Please Login to see your payments!
+          </Text>
+        )}
       </View>
     </Loading>
   );
@@ -150,7 +152,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: COLORS.gray5,
     ...FONTS.h4M,
-    marginLeft: 20
+    marginLeft: 20,
   },
   OrderId: {
     ...FONTS.h3M,

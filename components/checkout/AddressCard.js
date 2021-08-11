@@ -16,7 +16,7 @@ const AddressCard = ({
   const dispatch = useDispatch();
 
   const navigateToAddressList = () => {
-    navigation.navigate('AddressList');
+    navigation.navigate('AddressList ');
   };
 
   const onPress = () => {

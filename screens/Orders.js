@@ -11,12 +11,14 @@ import {
 import {Loading, OrderCard, VectorIcon} from '../components';
 import {COLORS, FONTFAMIY, FONTS, SIZES} from '../constants';
 import {useSelector, useDispatch} from 'react-redux';
-import firestore from '@react-native-firebase/firestore';
+import {useIsFocused} from '@react-navigation/native';
 
 // COLLECTION
+import firestore from '@react-native-firebase/firestore';
 const orderCollection = firestore().collection('orders');
 
 const Orders = () => {
+  const isFocused = useIsFocused();
   const userId = useSelector(state => state.user.userId);
   const [orderList, setOrderList] = useState([]);
   const [limit, setLimit] = useState(4);
@@ -24,20 +26,20 @@ const Orders = () => {
 
   useEffect(() => {
     getOrdersData();
-  }, []);
+  }, [isFocused]);
 
   const getOrdersData = () => {
-    console.log(userId);
-    if(userId != null){
-    orderCollection
-      .where('Customer.id', '==', userId.toString())
-      .orderBy('oTime', 'desc')
-      .limit(limit)
-      .onSnapshot(snapshot => {
-        setOrderList(
-          snapshot.docs.map(doc => ({id: doc.id, item: doc.data(), doc})),
-        );
-      });
+    console.log('USER ID FROM ORDER TAB ', userId);
+    if (userId != null) {
+      orderCollection
+        .where('Customer.id', '==', userId.toString())
+        .orderBy('oTime', 'desc')
+        .limit(limit)
+        .onSnapshot(snapshot => {
+          setOrderList(
+            snapshot.docs.map(doc => ({id: doc.id, item: doc.data(), doc})),
+          );
+        });
     }
     setListLoading(false);
   };
@@ -96,9 +98,11 @@ const Orders = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>My Orders</Text>
-     {userId != null? renderOrderList() : 
-     <Text style={styles.loginText}>Please Login to see your orders!</Text>
-     }
+      {userId != null ? (
+        renderOrderList()
+      ) : (
+        <Text style={styles.loginText}>Please Login to see your orders!</Text>
+      )}
     </SafeAreaView>
   );
 };
@@ -125,5 +129,5 @@ const styles = StyleSheet.create({
   loginText: {
     color: COLORS.gray5,
     ...FONTS.h4M,
-  }
+  },
 });

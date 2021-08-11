@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   StyleSheet,
   Text,
@@ -70,6 +70,7 @@ const AddNewAddress = ({route}) => {
   const userId = useSelector(state => state.user.userId);
   const isFocused = useIsFocused();
   const navigation = useNavigation();
+  const scrollViewRef = useRef();
   const lat = route?.params?.lat;
   const lng = route?.params?.lng;
   const address = route?.params?.address;
@@ -155,16 +156,6 @@ const AddNewAddress = ({route}) => {
   };
 
   const onSubmit = async () => {
-    // let errorValuesRef = errorValues;
-
-    // _.forOwn(values, function (value, key) {
-    //   if (!value.length) {
-    //     _.update(errorValuesRef, `${key}`, function () {
-    //       return true;
-    //     });
-    //   }
-    // });
-
     const data = {
       fullName,
       mobileNumber,
@@ -262,7 +253,7 @@ const AddNewAddress = ({route}) => {
 
   function renderForm() {
     return (
-      <ScrollView>
+      <ScrollView ref={scrollViewRef}>
         <View style={styles.formContainer}>
           <View style={styles.mapContainer}>
             <MapView
@@ -370,6 +361,7 @@ const AddNewAddress = ({route}) => {
               valueField="value"
               value={dropdown}
               onChange={item => {
+                scrollViewRef.current.scrollToEnd({duration: 500});
                 setDropdown(item.value);
               }}
               renderItem={item => renderDropdownItem(item)}

@@ -203,6 +203,9 @@ const App = () => {
                     'USER DOCUMENT CREATED IN ONAUTHSTATECHANGED APP JS',
                   ),
                 );
+            } else {
+              // FIXME:
+              console.log('ALREADY USER FROM ONAUTHSTATECHANGED APP JS');
             }
           }
         }
