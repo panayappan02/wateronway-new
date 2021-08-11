@@ -76,6 +76,7 @@ const Checkout = () => {
           }
         } else {
           // TODO: IF ADDRESS AVAILABLE
+          setUserDetailsAvailable(true);
           const defaultAddress = _.find(
             snapshot.data()?.addresses,
             function (address) {
