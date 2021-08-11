@@ -14,16 +14,18 @@ import {Divider} from 'react-native-elements';
 import {Button, Loading, VectorIcon} from '../components';
 import {SafeAreaView} from 'react-native';
 import {customerPayment} from '../helper/api';
+import {useIsFocused} from '@react-navigation/native';
 
 const Payments = () => {
-  const [loading, setLoading] = useState(true);
+  const isFocused = useIsFocused();
   const userId = useSelector(state => state.user.userId);
+  const [loading, setLoading] = useState(true);
   const [totalVendors, setTotalVendors] = useState(null);
   const [totalPendingAmount, setTotalPendingAmount] = useState(null);
   const [payments, setPayments] = useState([]);
   useEffect(() => {
     getPaymentInfo();
-  }, []);
+  }, [isFocused]);
 
   const getPaymentInfo = async () => {
     try {
