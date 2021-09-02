@@ -94,7 +94,7 @@ const Home = () => {
         sellerSnapshotData,
         _.isEqual,
       );
-      
+
       const sellers = [];
 
       uniqueSellersSnapshotData.map(doc => {
@@ -107,16 +107,17 @@ const Home = () => {
         );
 
         if (distance <= doc.item.deliverableDistance) {
-          sellers.push(doc);
-        }
-        else{
-          console.log(locationResponse?.latitude);
-          console.log(locationResponse?.longitude);
-          console.log(doc.item.g.geopoint._latitude);
-          console.log(doc.item.g.geopoint._longitude);
+          const docRef = {...doc, distance};
+
+          sellers.push(docRef);
+        } else {
+          // TODO: If not satisfy the deliverable distance of seller
+          // console.log(locationResponse?.latitude);
+          // console.log(locationResponse?.longitude);
+          // console.log(doc.item.g.geopoint._latitude);
+          // console.log(doc.item.g.geopoint._longitude);
         }
       });
-      console.log(sellers)
       setSellers(sellers);
       const sellerListForRedux = _.map(sellers, function (seller) {
         return {
@@ -136,28 +137,39 @@ const Home = () => {
       setBanners(banners);
 
       const sellerIds = _.map(sellers, 'id');
-      getProductDetails(sellerIds);
+      const sellersDistanceFromUserArray = _.map(sellers, 'distance');
+      getProductDetails(sellerIds, sellersDistanceFromUserArray);
     } catch (error) {
       console.log('ERROR IN GETSELLERDETAILS ', error);
     }
   };
 
-  const getProductDetails = async sellerIdsArr => {
+  const getProductDetails = async (
+    sellerIdsArr,
+    sellersDistanceFromUserArray,
+  ) => {
     try {
       productCollection
         .where('seller_id', 'in', sellerIdsArr)
         .onSnapshot(snapshot => {
-          const productSnapshotData = snapshot.docs.map(doc => ({
-            id: doc.id,
-            item: doc.data(),
-          }));
-          if(productSnapshotData.length == 0){
+          const productSnapshotData = snapshot.docs.map((doc, index) => {
+            return {
+              id: doc.id,
+              item: {
+                ...doc.data(),
+                price: doc.data().priceByKM[
+                  `${Math.round(sellersDistanceFromUserArray[index])}`
+                ],
+              },
+            };
+          });
+          if (productSnapshotData.length == 0) {
             setProductsNotAvailable(true);
           }
           setProducts(productSnapshotData);
         });
     } catch (error) {
-    //  console.log('ERROR IN GETPRODUCTDETAILS ', error);
+      //  console.log('ERROR IN GETPRODUCTDETAILS ', error);
     } finally {
       setLoading(false);
     }
@@ -175,16 +187,16 @@ const Home = () => {
       <TouchableOpacity
         onPress={navigateToLocationSelection}
         style={styles.cardShadow}>
-          <View style={styles.locationRow}>
-        <View style={[styles.cardContainer, styles.addressContainer]}>
-          <VectorIcon.Ionicons name="ios-location-outline" size={30} />
-          <Text style={styles.addressText} numberOfLines={2}>
-            {location?.address}
-          </Text>
-        </View>
-        <View>
-        <Image source={images.logo} style={styles.logoImage} />
-        </View>
+        <View style={styles.locationRow}>
+          <View style={[styles.cardContainer, styles.addressContainer]}>
+            <VectorIcon.Ionicons name="ios-location-outline" size={30} />
+            <Text style={styles.addressText} numberOfLines={2}>
+              {location?.address}
+            </Text>
+          </View>
+          <View>
+            <Image source={images.logo} style={styles.logoImage} />
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -199,14 +211,29 @@ const Home = () => {
   function renderProducts() {
     return (
       <View style={styles.productListWrapper}>
-       {!isProductsNotAvialable? <Text style={styles.productListTitle}>Our Services Near You !</Text>:<></>}
+        {!isProductsNotAvialable ? (
+          <Text style={styles.productListTitle}>Our Services Near You !</Text>
+        ) : (
+          <></>
+        )}
         <View style={styles.productListContainer}>
           {products.map((product, index) => {
             return <ProductCard key={index} product={product} />;
           })}
-          {isProductsNotAvialable?<Text style={styles.notAvailableTitle}>Sorry! Now we are not available in your location!</Text>:<></>}
-          {isProductsNotAvialable?<Text style={styles.notAvailableSubTitle}>Please try changing your location.</Text>:<></>}
-
+          {isProductsNotAvialable ? (
+            <Text style={styles.notAvailableTitle}>
+              Sorry! Now we are not available in your location!
+            </Text>
+          ) : (
+            <></>
+          )}
+          {isProductsNotAvialable ? (
+            <Text style={styles.notAvailableSubTitle}>
+              Please try changing your location.
+            </Text>
+          ) : (
+            <></>
+          )}
         </View>
       </View>
     );
@@ -234,7 +261,7 @@ const styles = StyleSheet.create({
     paddingBottom: 75,
   },
   cardShadow: {
-  // borderRadius: 5,
+    // borderRadius: 5,
     height: 70,
     width: '100%',
     backgroundColor: COLORS.white,
@@ -245,9 +272,9 @@ const styles = StyleSheet.create({
     // },
     // shadowOpacity: 0.22,
     // shadowRadius: 2.22,
-     elevation: 5,
- //   marginHorizontal: 5,
-  //  marginTop: 9,
+    elevation: 5,
+    //   marginHorizontal: 5,
+    //  marginTop: 9,
   },
   cardContainer: {
     backgroundColor: '#fff',
@@ -259,13 +286,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: SIZES.radius,
     flexDirection: 'row',
     alignItems: 'center',
-    maxWidth:'80%'
+    maxWidth: '80%',
   },
   addressText: {
     marginLeft: 5,
     ...FONTS.body6SB,
     // fontFamily: FONTFAMIY.TTCommonsMedium,
-   fontSize: 16,
+    fontSize: 16,
     width: '90%',
     color: COLORS.transparentBlack9,
   },
@@ -299,9 +326,8 @@ const styles = StyleSheet.create({
     marginBottom: SIZES.base,
   },
   notAvailableSubTitle: {
-   textAlign: 'center',
-   marginLeft: 5,
-   ...FONTS.h4M,
-  }
+    textAlign: 'center',
+    marginLeft: 5,
+    ...FONTS.h4M,
+  },
 });
-
