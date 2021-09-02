@@ -4,6 +4,8 @@ import {
   updateCustomer,
   customerPayment,
   cancelOrder,
+  ratingReviewOrder,
+  updateCustomerFcmToken
 } from './graphqlApis';
 
 export {
@@ -12,4 +14,6 @@ export {
   updateCustomer,
   customerPayment,
   cancelOrder,
+  ratingReviewOrder,
+  updateCustomerFcmToken
 };

@@ -8,20 +8,102 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1055801345407:android:f776c8b1649776554bc64a",
+        "android_client_info": {
+          "package_name": "com.wateronway.wateronway_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055801345407-3nm7dkl76d3hsmf7pmlbbs08mpli04v0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wateronway.wateronway_app",
+            "certificate_hash": "a0735eca47b53444911a0a337055c6e0a7a2da19"
+          }
+        },
+        {
+          "client_id": "1055801345407-jlivak7bf18qqjekb7tt05s5uikvpiaq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wateronway.wateronway_app",
+            "certificate_hash": "76a231264d051382c585b4d2ab634c3894464e84"
+          }
+        },
+        {
+          "client_id": "1055801345407-t2t2u6bv3nvdrhqroelk61shuqbn08ja.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wateronway.wateronway_app",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1055801345407-iqmmnvomc8intb4d2p9gdpn3nr2ncm7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxkBYQ6YHVHvvkJ7mdN1ogvOZ5VCjKvuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055801345407-iqmmnvomc8intb4d2p9gdpn3nr2ncm7j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055801345407:android:5081fb8ffda239434bc64a",
+        "android_client_info": {
+          "package_name": "com.wateronway.wow_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055801345407-ecrhtu3k0dr6rjg5ikpa6s6ikbt47j6m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wateronway.wow_app",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1055801345407-iqmmnvomc8intb4d2p9gdpn3nr2ncm7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxkBYQ6YHVHvvkJ7mdN1ogvOZ5VCjKvuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055801345407-iqmmnvomc8intb4d2p9gdpn3nr2ncm7j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1055801345407:android:7921fed7d273d01c4bc64a",
         "android_client_info": {
           "package_name": "com.wateronway_rn"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "1055801345407-ohoe5ffl6resh70nsp8j5d7e7f5jppah.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.wateronway_rn",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
-          }
-        },
         {
           "client_id": "1055801345407-iqmmnvomc8intb4d2p9gdpn3nr2ncm7j.apps.googleusercontent.com",
           "client_type": 3
@@ -51,14 +133,6 @@
         }
       },
       "oauth_client": [
-        {
-          "client_id": "1055801345407-ev8imbjovc1kao6mbgelda5v58nsfi2g.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.wateronwayrn",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
-          }
-        },
         {
           "client_id": "1055801345407-iqmmnvomc8intb4d2p9gdpn3nr2ncm7j.apps.googleusercontent.com",
           "client_type": 3

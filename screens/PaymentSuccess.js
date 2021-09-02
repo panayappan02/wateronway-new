@@ -8,10 +8,12 @@ import {useNavigation, StackActions} from '@react-navigation/native';
 const PaymentSuccess = () => {
   const navigation = useNavigation();
 
-  const navigateToHomeScreen = () => {
-    navigation.dispatch(StackActions.replace('Tabs'));
+  // const navigateToHomeScreen = () => {
+  //   navigation.dispatch(StackActions.replace('Tabs'));
+  // };
+  const navigateToOrders = () => {
+    navigation.navigate('Orders');
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.lottieContainer}>
@@ -26,7 +28,7 @@ const PaymentSuccess = () => {
       <Text style={styles.successText}>Order Placed</Text>
       <View style={styles.btnContainer}>
         <Button
-          onPress={navigateToHomeScreen}
+          onPress={navigateToOrders}
           label="Continue"
           containerStyle={{
             borderRadius: 5,

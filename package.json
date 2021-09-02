@@ -33,7 +33,6 @@
     "nanoid": "^3.1.21",
     "native-base": "^2.15.2",
     "patch-package": "^6.4.7",
-    "popup-ui": "^1.2.2",
     "react": "17.0.1",
     "react-native": "0.64.0",
     "react-native-android-location-enabler": "^1.2.2",
@@ -76,10 +75,7 @@
     "react-native-vector-icons": "^8.1.0",
     "react-redux": "^7.2.4",
     "rn-animated-image-carousel": "^1.0.0",
-    "short-id": "^0.1.0-1",
-    "shortid": "^2.2.16",
     "sp-react-native-in-app-updates": "^1.1.1",
-    "tawkto-react": "^2.0.3",
     "validator": "^13.6.0"
   },
   "devDependencies": {

@@ -3,26 +3,20 @@ import {images} from '.';
 export default [
   {
     id: '1',
-    title: 'Quick and Easy Payments',
-    description: `The easier it's for online customers to pay you, the more money you'll make. a sprint where `,
-    image: images.onboarding1,
+    title: 'Water at your doorsteps',
+    description: `Wateronway makes the process of getting drinking/household water at your doorstep.`,
+    image: images.onboarding4,
   },
   {
     id: '2',
-    title: 'Smart point of Sale',
-    description: `The easier it's for online customers to pay you, the more money you'll make. a sprint where `,
+    title: 'Easy to Use',
+    description: `It is very easy to use Wateronway application to search and place an order`,
     image: images.onboarding2,
   },
   {
     id: '3',
-    title: 'Instant Notification',
-    description: `The easier it's for online customers to pay you, the more money you'll make. a sprint where `,
+    title: 'Customer Support',
+    description: `A customer can reach use anytime for their order/product releated queries. We are always available!`,
     image: images.onboarding3,
-  },
-  {
-    id: '4',
-    title: 'Customize Everything',
-    description: `The easier it's for online customers to pay you, the more money you'll make. a sprint where `,
-    image: images.onboarding4,
   },
 ];

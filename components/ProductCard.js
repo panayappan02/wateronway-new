@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity, Linking} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -30,6 +30,7 @@ const ProductCard = ({product}) => {
     seller_id,
     deliveryCharges,
     tax,
+    msg
   } = product.item;
   const {
     productModalVisible,
@@ -56,6 +57,7 @@ const ProductCard = ({product}) => {
         qty: 1,
         deliveryCharges,
         tax,
+        msg
       }),
     );
     refRBSheet.current.open();
@@ -67,6 +69,17 @@ const ProductCard = ({product}) => {
     refRBSheet.current.close();
     navigation.navigate('Checkout');
   };
+
+  const openBulkOrder = async () => {
+    try {
+      await Linking.openURL(
+        'https://wateronway.com/BulkOrder',
+      );
+    } catch (error) {
+      console.log('ERROR GETHELP ', error);
+    }
+  };
+
   return (
     <>
       <View style={styles.productCardWrapper}>
@@ -219,7 +232,7 @@ const ProductCard = ({product}) => {
 
           <View style={styles.moreDiscountContainer}>
             <Text style={styles.needMoreText}>
-              Need More? <Text style={styles.contactUsText}>CONTACT US</Text>{' '}
+              Need More? <TouchableOpacity onPress={()=> openBulkOrder() }><Text style={styles.contactUsText}>CONTACT US</Text></TouchableOpacity>{' '}
               for volumetric discounts that suits your needs!
             </Text>
           </View>

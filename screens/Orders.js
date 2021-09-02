@@ -101,7 +101,7 @@ const Orders = () => {
       {userId != null ? (
         renderOrderList()
       ) : (
-        <Text style={styles.loginText}>Please Login to see your orders!</Text>
+        <Text style={styles.loginText}>Please login to see your orders!</Text>
       )}
     </SafeAreaView>
   );

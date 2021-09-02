@@ -29,7 +29,7 @@ const Payments = () => {
 
   const getPaymentInfo = async () => {
     try {
-      const res = await customerPayment();
+      const res = await customerPayment(userId);
       if (res?.status === 'success') {
         setTotalVendors(res?.response?.data?.CustomerPayment?.totalVendors);
         setTotalPendingAmount(
@@ -102,7 +102,7 @@ const Payments = () => {
           </ScrollView>
         ) : (
           <Text style={styles.loginText}>
-            Please Login to see your payments!
+            Please login to see your payments!
           </Text>
         )}
       </View>
@@ -150,11 +150,12 @@ const styles = StyleSheet.create({
     // marginLeft: 5,
     margin: 14,
     marginTop: 20,
+    marginBottom:10,
   },
   loginText: {
     color: COLORS.gray5,
     ...FONTS.h4M,
-    marginLeft: 20,
+    marginLeft: 14,
   },
   OrderId: {
     ...FONTS.h3M,

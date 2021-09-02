@@ -1,4 +1,4 @@
-package com.wateronwayrn;
+package com.wateronway.wateronway_app;
 
 import com.facebook.react.ReactActivity;
 import org.devio.rn.splashscreen.SplashScreen;

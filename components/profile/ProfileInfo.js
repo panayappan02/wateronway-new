@@ -256,6 +256,7 @@ import firestore from '@react-native-firebase/firestore';
 import {COLORS, FONTFAMIY, FONTS, icons, SIZES} from '../../constants';
 import {Button, Loading, VectorIcon} from '..';
 const usersCollection = firestore().collection('users');
+import {updateCustomerFcmToken} from '../../helper/api';
 
 const ProfileInfo = () => {
   const dispatch = useDispatch();
@@ -277,6 +278,12 @@ const ProfileInfo = () => {
   const logout = async () => {
     if (logoutLoading) return;
     setLogoutLoading(true);
+    try{
+    await updateCustomerFcmToken(userId,'');
+    }
+    catch(err){
+      console.log(err);
+    }
     await userHelper.removeUserId();
     dispatch(setUserId(null));
     dispatch(setUserDetails(null));
@@ -290,7 +297,7 @@ const ProfileInfo = () => {
   const openGetHelp = async () => {
     try {
       await Linking.openURL(
-        'https://tawk.to/chat/5f9401572915ea4ba09659cf/default',
+        'https://wateronway.com/help',
       );
     } catch (error) {
       console.log('ERROR GETHELP ', error);

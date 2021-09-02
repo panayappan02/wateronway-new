@@ -53,9 +53,10 @@ const OrderCard = ({order, lastItem}) => {
           style={styles.DetailsButton}>
           <Text style={styles.DetailsButtonSubTitle}>Details</Text>
         </TouchableOpacity>
-        <Text style={styles.statusDelivered}>{order?.item?.status}</Text>
-        {/* <Text style={styles.statusOrdered}>Ordered</Text> */}
-        {/* <Text style={styles.statusWarning}>CancelledBySeller</Text> */}
+      {order?.item?.status == 'Delivered'?  <Text style={styles.statusDelivered}>{order?.item?.status}</Text>:<>
+      {order?.item?.status == 'Ordered'?  <Text style={styles.statusOrdered}>{order?.item?.status}</Text>:
+      <Text style={styles.statusWarning}>{order?.item?.status}</Text>}
+      </>}
       </View>
     </View>
   );

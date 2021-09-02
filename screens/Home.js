@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {Carousel, Loading, ProductCard, VectorIcon} from '../components';
-import {SIZES, icons, FONTS, FONTFAMIY, COLORS} from '../constants';
+import {SIZES, icons, FONTS, FONTFAMIY, COLORS, images} from '../constants';
 import {locationHelper, calculateDistance} from '../utils';
 import {GeoFirestore} from 'geofirestore';
 import _ from 'lodash';
@@ -31,7 +31,7 @@ const Home = () => {
   const [sellers, setSellers] = useState([]);
   const [products, setProducts] = useState([]);
   const [banners, setBanners] = useState([]);
-
+  const [isProductsNotAvialable, setProductsNotAvailable] = useState(false);
   const geofirestore = new GeoFirestore(firestore());
   const geocollection = geofirestore.collection('sellers');
   const sellerCollection = firestore().collection('sellers');
@@ -61,6 +61,7 @@ const Home = () => {
 
   const getSellerDetails = async () => {
     try {
+      setProductsNotAvailable(false);
       const locationResponse = await locationHelper.getLocation();
       setLocation(locationResponse);
 
@@ -73,6 +74,7 @@ const Home = () => {
           radius: 10,
         })
         .get();
+
       const sellerSnapshot = await sellerCollection
         .where('deliverableDistance', '>=', 10)
         .get();
@@ -81,6 +83,7 @@ const Home = () => {
         id: doc.id,
         item: doc.data(),
       }));
+
       const sellerSnapshotData = sellerSnapshot.docs.map(doc => ({
         id: doc.id,
         item: doc.data(),
@@ -91,7 +94,7 @@ const Home = () => {
         sellerSnapshotData,
         _.isEqual,
       );
-
+      
       const sellers = [];
 
       uniqueSellersSnapshotData.map(doc => {
@@ -106,8 +109,14 @@ const Home = () => {
         if (distance <= doc.item.deliverableDistance) {
           sellers.push(doc);
         }
+        else{
+          console.log(locationResponse?.latitude);
+          console.log(locationResponse?.longitude);
+          console.log(doc.item.g.geopoint._latitude);
+          console.log(doc.item.g.geopoint._longitude);
+        }
       });
-
+      console.log(sellers)
       setSellers(sellers);
       const sellerListForRedux = _.map(sellers, function (seller) {
         return {
@@ -142,11 +151,13 @@ const Home = () => {
             id: doc.id,
             item: doc.data(),
           }));
-
+          if(productSnapshotData.length == 0){
+            setProductsNotAvailable(true);
+          }
           setProducts(productSnapshotData);
         });
     } catch (error) {
-      console.log('ERROR IN GETPRODUCTDETAILS ', error);
+    //  console.log('ERROR IN GETPRODUCTDETAILS ', error);
     } finally {
       setLoading(false);
     }
@@ -164,11 +175,16 @@ const Home = () => {
       <TouchableOpacity
         onPress={navigateToLocationSelection}
         style={styles.cardShadow}>
+          <View style={styles.locationRow}>
         <View style={[styles.cardContainer, styles.addressContainer]}>
           <VectorIcon.Ionicons name="ios-location-outline" size={30} />
-          <Text style={styles.addressText} numberOfLines={1}>
+          <Text style={styles.addressText} numberOfLines={2}>
             {location?.address}
           </Text>
+        </View>
+        <View>
+        <Image source={images.logo} style={styles.logoImage} />
+        </View>
         </View>
       </TouchableOpacity>
     );
@@ -183,11 +199,14 @@ const Home = () => {
   function renderProducts() {
     return (
       <View style={styles.productListWrapper}>
-        <Text style={styles.productListTitle}>Our Services Near You !</Text>
+       {!isProductsNotAvialable? <Text style={styles.productListTitle}>Our Services Near You !</Text>:<></>}
         <View style={styles.productListContainer}>
           {products.map((product, index) => {
             return <ProductCard key={index} product={product} />;
           })}
+          {isProductsNotAvialable?<Text style={styles.notAvailableTitle}>Sorry! Now we are not available in your location!</Text>:<></>}
+          {isProductsNotAvialable?<Text style={styles.notAvailableSubTitle}>Please try changing your location.</Text>:<></>}
+
         </View>
       </View>
     );
@@ -215,18 +234,20 @@ const styles = StyleSheet.create({
     paddingBottom: 75,
   },
   cardShadow: {
-    borderRadius: 5,
-    backgroundColor: 'transparent',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 5,
-    marginHorizontal: 5,
-    marginTop: 9,
+  // borderRadius: 5,
+    height: 70,
+    width: '100%',
+    backgroundColor: COLORS.white,
+    // shadowColor: '#000',
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 1,
+    // },
+    // shadowOpacity: 0.22,
+    // shadowRadius: 2.22,
+     elevation: 5,
+ //   marginHorizontal: 5,
+  //  marginTop: 9,
   },
   cardContainer: {
     backgroundColor: '#fff',
@@ -238,12 +259,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: SIZES.radius,
     flexDirection: 'row',
     alignItems: 'center',
+    maxWidth:'80%'
   },
   addressText: {
     marginLeft: 5,
-    ...FONTS.body4M,
+    ...FONTS.body6SB,
     // fontFamily: FONTFAMIY.TTCommonsMedium,
-    fontSize: 18,
+   fontSize: 16,
     width: '90%',
     color: COLORS.transparentBlack9,
   },
@@ -262,4 +284,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  logoImage: {
+    height: 70,
+    width: 70,
+  },
+  notAvailableTitle: {
+    ...FONTS.h3M,
+    marginLeft: 5,
+    marginBottom: SIZES.base,
+  },
+  notAvailableSubTitle: {
+   textAlign: 'center',
+   marginLeft: 5,
+   ...FONTS.h4M,
+  }
 });
+

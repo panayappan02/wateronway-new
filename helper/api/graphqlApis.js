@@ -1,8 +1,10 @@
 import {request} from '../../utils';
 
+const api = 'https://prod.api.wateronway.in';
+
 const createCustomer = async (mobile, fcmToken) => {
   const res = await request(
-    'https://0b4n57itb1.execute-api.us-east-1.amazonaws.com/dev/graphql',
+    api,
     'post',
     {
       query: `
@@ -27,7 +29,7 @@ const updateCustomer = async (id, name, email) => {
   console.log('USER ID ', id, 'NAME ', name, 'EMAIL ', email);
 
   const res = await request(
-    'https://0b4n57itb1.execute-api.us-east-1.amazonaws.com/dev/graphql',
+    api,
     'post',
     {
       query: `
@@ -53,7 +55,7 @@ const updateCustomer = async (id, name, email) => {
 };
 const createOrder = async (sellerId, customerId, orderAmount) => {
   const res = await request(
-    'https://0b4n57itb1.execute-api.us-east-1.amazonaws.com/dev/graphql',
+    api,
     'post',
     {
       query: `
@@ -61,7 +63,7 @@ const createOrder = async (sellerId, customerId, orderAmount) => {
         CreateOrder(
           sellerId: ${Number(sellerId)},
           customerId: ${Number(customerId)},
-          orderAmount: ${Number(customerId)},
+          orderAmount: ${Number(orderAmount)},
          
         ){
           id
@@ -73,15 +75,15 @@ const createOrder = async (sellerId, customerId, orderAmount) => {
 
   return res;
 };
-const customerPayment = async (sellerId, customerId, orderAmount) => {
+const customerPayment = async (customerId) => {
   const res = await request(
-    'https://0b4n57itb1.execute-api.us-east-1.amazonaws.com/dev/graphql',
+    api,
     'post',
     {
       query: `
       mutation{
         CustomerPayment(
-          customerId: 10
+          customerId: ${customerId},
         ){
           totalPendingAmount,
           totalVendors,
@@ -100,9 +102,9 @@ const customerPayment = async (sellerId, customerId, orderAmount) => {
   console.log(res);
   return res;
 };
-const cancelOrder = async orderId => {
+const cancelOrder = async (orderId) => {
   const res = await request(
-    'https://0b4n57itb1.execute-api.us-east-1.amazonaws.com/dev/graphql',
+    api,
     'post',
     {
       query: `
@@ -121,10 +123,60 @@ const cancelOrder = async orderId => {
   return res;
 };
 
+
+const ratingReviewOrder = async (orderId,rating,review) => {
+  console.log(orderId);
+  console.log(rating);
+  console.log(review);
+  const res = await request(
+    api,
+    'post',
+    {
+      query: `
+      mutation{
+        RatingReview(
+          orderId: ${Number(orderId)},
+          rating: ${Number(rating)},
+          review: ${review}
+        ){
+          id
+        }
+      }
+      `,
+    },
+  );
+  console.log(res);
+  return res;
+};
+
+
+const updateCustomerFcmToken = async (id,fcmToken) => {
+  const res = await request(
+    api,
+    'post',
+    {
+      query: `
+      mutation{
+        UpdateCustomerFCMToken(
+          id: ${Number(id)},
+          fcmToken: "${fcmToken}"
+        ){
+          id,
+        }
+      }
+      `,
+    },
+  );
+  console.log(res);
+  return res;
+};
+
 export {
   createCustomer,
   updateCustomer,
   createOrder,
   customerPayment,
   cancelOrder,
+  ratingReviewOrder,
+  updateCustomerFcmToken
 };

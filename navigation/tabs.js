@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {StyleSheet, Text, View, TextInput} from 'react-native';
+import {StyleSheet, Text, View, TextInput,TouchableOpacity} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Home, Payments, Orders, Profile} from '../screens';
 import {COLORS, FONTFAMIY, FONTS, icons, SIZES} from '../constants';
@@ -13,17 +13,22 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import { ratingReviewOrder } from '../helper/api';
 
 const Tab = createBottomTabNavigator();
 
 const Tabs = () => {
   const navigation = useNavigation();
   const refRBSheet = useRef();
+  const [orderId,setOrderId] = useState(null);
+  const [rating,setRating] = useState(null);
+  const [review,setReview] = useState(null);
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       console.log('Message handled in the Active State!', remoteMessage);
       if (remoteMessage.data?.type == 'OrderDelivered') {
+        setOrderId(remoteMessage.data?.orderId);
         refRBSheet.current.open();
       }
     });
@@ -34,6 +39,7 @@ const Tabs = () => {
     messaging().setBackgroundMessageHandler(async remoteMessage => {
       console.log('Message handled in the background!', remoteMessage);
       if (remoteMessage.data?.type == 'OrderDelivered') {
+        setOrderId(remoteMessage.data?.orderId);
         refRBSheet.current.open();
       }
     });
@@ -44,6 +50,7 @@ const Tabs = () => {
         remoteMessage,
       );
       if (remoteMessage.data?.type == 'OrderDelivered') {
+        setOrderId(remoteMessage.data?.orderId);
         refRBSheet.current.open();
         navigation.navigate(remoteMessage.data.type);
       }
@@ -58,6 +65,7 @@ const Tabs = () => {
             remoteMessage,
           );
           if (remoteMessage.data?.type == 'OrderDelivered') {
+            setOrderId(remoteMessage.data?.orderId);
             refRBSheet.current.open();
             navigation.navigate(remoteMessage.data.type);
           }
@@ -65,8 +73,14 @@ const Tabs = () => {
       });
   }, []);
 
-  const ratingCompleted = rating => {
-    console.log('Rating is: ' + rating);
+  const sendReview = async() => {
+    refRBSheet.current.close();
+    try{
+  var resp = await ratingReviewOrder(orderId,rating,review);
+  console.log(resp);
+    }catch(e){
+      console.log(e);
+    }
   };
 
   return (
@@ -212,6 +226,7 @@ const Tabs = () => {
               selectedColor={COLORS.starYellow}
               reviewColor={COLORS.starYellow}
               reviewSize={22}
+              onFinishRating={(val)=> setRating(val)}
             />
           </View>
 
@@ -228,10 +243,14 @@ const Tabs = () => {
             numberOfLines={3}
             textAlignVertical={'top'}
             placeholder="Your review"
+            value={review}
+            onChange={(e) => setReview(e.target.value)}
           />
 
           <View style={styles.sendReviewButtonContainer}>
-            <Text style={styles.sendReviewBtnText}>SEND REVIEW</Text>
+            <TouchableOpacity style={styles.sendReviewBtnText} onPress={()=> sendReview()}>
+              <Text style={{color: COLORS.white}}>SEND REVIEW</Text>
+              </TouchableOpacity>
           </View>
         </View>
       </RBSheet>

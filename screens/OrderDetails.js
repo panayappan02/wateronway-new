@@ -6,6 +6,7 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Linking
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {COLORS, FONTFAMIY, FONTS, SIZES, icons} from '../constants';
@@ -19,6 +20,8 @@ import {useNavigation} from '@react-navigation/native';
 // COLLECTION
 import firestore from '@react-native-firebase/firestore';
 const orderCollection = firestore().collection('orders');
+
+
 
 const OrderDetails = ({route}) => {
   const navigation = useNavigation();
@@ -60,6 +63,16 @@ const OrderDetails = ({route}) => {
     navigation.goBack();
   };
 
+  const openGetHelp = async () => {
+    console.log('kdkk')
+    try {
+      await Linking.openURL(
+        'https://wateronway.com/help',
+      );
+    } catch (error) {
+      console.log('ERROR GETHELP ', error);
+    }
+  };
   return (
     <View style={styles.Container}>
       <NavigationBar label="Order Details" />
@@ -77,9 +90,10 @@ const OrderDetails = ({route}) => {
             Seller Name:{' '}
             <Text style={styles.DetailsSubTitleBold}>{Seller?.Name}</Text>
           </Text>
-          <Text style={styles.statusDelivered}>{status}</Text>
-          {/* <Text style={styles.statusOrdered}>Ordered</Text> */}
-          {/* <Text style={styles.statusWarning}>CancelledBySeller</Text> */}
+          {status == 'Delivered'?  <Text style={styles.statusDelivered}>{status}</Text>:<>
+      {status == 'Ordered'?  <Text style={styles.statusOrdered}>{status}</Text>:
+      <Text style={styles.statusWarning}>{status}</Text>}
+      </>}
         </View>
 
         <Divider />
@@ -188,18 +202,19 @@ const OrderDetails = ({route}) => {
 
         <View style={styles.TitleRowwithLM}>
           <View style={styles.halfWidth}>
-            <TouchableOpacity onPress={() => refRBSheet.current.open()}>
+     {status == 'Ordered'?    <TouchableOpacity onPress={() => refRBSheet.current.open()}>
               <View style={styles.cancelButton}>
                 <Text style={styles.cancelButtonText}>Cancel</Text>
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity>: <></>}
+
           </View>
           <View style={styles.halfWidth}>
-            <View
+            <TouchableOpacity 
               style={styles.helpButton}
-              onPress={() => tawkTo(tawkToPropertyId, tawkToKey)}>
+              onPress={() => {openGetHelp}}>
               <Text style={styles.helpButtonText}>Need Help!</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>

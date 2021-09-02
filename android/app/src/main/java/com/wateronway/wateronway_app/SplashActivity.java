@@ -1,4 +1,4 @@
-package com.wateronwayrn; 
+package com.wateronway.wateronway_app; 
 
 import android.content.Intent;
 import android.os.Bundle;

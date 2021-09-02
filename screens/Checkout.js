@@ -239,12 +239,12 @@ const Checkout = () => {
   function renderPayment() {
     return (
       <View style={styles.payment}>
-        <View style={styles.titleBar}>
+       {isDeliverable ? <View style={styles.titleBar}>
           <Text style={[styles.title, styles.left]}>Payment Mode</Text>
           <TouchableOpacity style={styles.right}>
             <Text style={styles.rightOption}>Cash On Delivery</Text>
           </TouchableOpacity>
-        </View>
+        </View>: <></>}
         {/* <View style={styles.paymentCardContainer}>
           <View style={styles.paymentCard}>
             <Image source={icons.cod} style={styles.paymentIcon} />
@@ -327,10 +327,15 @@ const Checkout = () => {
               style={styles.notDeliverMsgImg}
             />
             <Text style={styles.notDeliverMsg}>
-              Can't Deliver at this Address
+              Can't Deliver at this Address.
+            </Text>
+            <Text style={styles.notDeliverMsgSubTitle}>
+             Try changing address!
             </Text>
           </View>
         )}
+
+       {isDeliverable? <Text style={styles.msgInfo}>{selectedProduct?.msg}</Text>:<></>}
       </View>
     );
   }
@@ -516,4 +521,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: COLORS.black1,
   },
+  notDeliverMsgSubTitle: {
+    marginTop: 20,
+    fontFamily: FONTFAMIY.MetropolisRegular,
+    fontSize: 20,
+    color: COLORS.warning,
+  },
+  msgInfo: {
+    ...FONTS.body3SB,
+    color: COLORS.warning,
+    textAlign: 'center',
+    margin: 20
+  }
 });

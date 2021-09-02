@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import {StackActions, CommonActions} from '@react-navigation/native';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const LocationSelection = ({route}) => {
   const navigation = useNavigation();
@@ -84,7 +85,7 @@ const LocationSelection = ({route}) => {
   if (gpsError) {
     return (
       <View>
-        <Text>Please turn on Location</Text>
+        <Text style={{textAlign: 'center', color: Colors.black, fontSize: 20}}>Please turn on Location</Text>
       </View>
     );
   }
