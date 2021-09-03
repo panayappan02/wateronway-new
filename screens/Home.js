@@ -153,15 +153,22 @@ const Home = () => {
         .where('seller_id', 'in', sellerIdsArr)
         .onSnapshot(snapshot => {
           const productSnapshotData = snapshot.docs.map((doc, index) => {
-            return {
-              id: doc.id,
-              item: {
-                ...doc.data(),
-                price: doc.data().priceByKM[
-                  `${Math.round(sellersDistanceFromUserArray[index])}`
-                ],
-              },
-            };
+            if (doc.data()?.priceByKM !== undefined) {
+              return {
+                id: doc.id,
+                item: {
+                  ...doc.data(),
+                  price: doc.data().priceByKM[
+                    `${Math.round(sellersDistanceFromUserArray[index])}`
+                  ],
+                },
+              };
+            } else {
+              return {
+                id: doc.id,
+                item: doc.data(),
+              };
+            }
           });
           if (productSnapshotData.length == 0) {
             setProductsNotAvailable(true);
