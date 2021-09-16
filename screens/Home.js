@@ -154,6 +154,7 @@ const Home = () => {
         .onSnapshot(snapshot => {
           const productSnapshotData = snapshot.docs.map((doc, index) => {
             if (doc.data()?.priceByKM !== undefined) {
+            if(doc.data().priceByKM[`${Math.round(sellersDistanceFromUserArray[index])}`] != undefined) {
               return {
                 id: doc.id,
                 item: {
@@ -163,6 +164,13 @@ const Home = () => {
                   ],
                 },
               };
+            } 
+            else{
+              return {
+                id: doc.id,
+                item: doc.data(),
+              };
+            }
             } else {
               return {
                 id: doc.id,

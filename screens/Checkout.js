@@ -264,7 +264,7 @@ const Checkout = () => {
               <View style={styles.row}>
                 <VectorIcon.FontAwesome name="rupee" size={13} />
                 <Text style={styles.price}>
-                  {selectedProduct?.mrp * selectedProduct?.qty}
+                  {selectedProduct?.price * selectedProduct?.qty}
                 </Text>
               </View>
             </View>
@@ -288,10 +288,11 @@ const Checkout = () => {
             <View style={styles.priceContainer}>
               <Text style={styles.priceLabel}>Discount:</Text>
               <View style={styles.row}>
-                <VectorIcon.FontAwesome name="rupee" size={13} />
+              <Text>- <VectorIcon.FontAwesome name="rupee" size={13} />
                 <Text style={styles.price}>
-                  {(selectedProduct?.mrp - selectedProduct?.price) *
+               {(selectedProduct?.mrp - selectedProduct?.price) *
                     selectedProduct?.qty}
+                </Text>
                 </Text>
               </View>
             </View>
