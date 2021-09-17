@@ -1,5 +1,12 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {StyleSheet, Text, View, Image, TouchableOpacity, Linking} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -30,8 +37,11 @@ const ProductCard = ({product}) => {
     seller_id,
     deliveryCharges,
     tax,
-    msg
+    msg,
+    rating,
   } = product.item;
+
+  console.log('RATING ', rating);
   const {
     productModalVisible,
     selectedSeller,
@@ -57,7 +67,7 @@ const ProductCard = ({product}) => {
         qty: 1,
         deliveryCharges,
         tax,
-        msg
+        msg,
       }),
     );
     refRBSheet.current.open();
@@ -72,9 +82,7 @@ const ProductCard = ({product}) => {
 
   const openBulkOrder = async () => {
     try {
-      await Linking.openURL(
-        'https://wateronway.com/BulkOrder',
-      );
+      await Linking.openURL('https://wateronway.com/BulkOrder');
     } catch (error) {
       console.log('ERROR GETHELP ', error);
     }
@@ -87,6 +95,7 @@ const ProductCard = ({product}) => {
           <Image source={{uri: image_url}} style={styles.productImage} />
           <View style={styles.productCardBottomContainer}>
             <Rating
+              startingValue={rating || 5}
               ratingCount={5}
               imageSize={18}
               readonly
@@ -131,7 +140,7 @@ const ProductCard = ({product}) => {
             padding: 14,
             alignItems: 'center',
             backgroundColor: COLORS.BGColor,
-            borderRadius:0,
+            borderRadius: 0,
             borderTopEndRadius: 15,
             borderTopStartRadius: 15,
           },
@@ -232,7 +241,10 @@ const ProductCard = ({product}) => {
 
           <View style={styles.moreDiscountContainer}>
             <Text style={styles.needMoreText}>
-              Need More? <TouchableOpacity onPress={()=> openBulkOrder() }><Text style={styles.contactUsText}>CONTACT US</Text></TouchableOpacity>{' '}
+              Need More?{' '}
+              <TouchableOpacity onPress={() => openBulkOrder()}>
+                <Text style={styles.contactUsText}>CONTACT US</Text>
+              </TouchableOpacity>{' '}
               for volumetric discounts that suits your needs!
             </Text>
           </View>
